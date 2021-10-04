@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	mc "multi_model_test/composer"
 	pb "multi_model_test/inference"
 	"os"
@@ -44,7 +45,7 @@ func parseFlags() Flags {
 
 	// flag.StringVar(&flags.ModelName, "m", "simple-string", "Name of model being served. (Required)")
 	// flag.StringVar(&flags.ModelList, "ml", "", "A file containing model names. One model per line.")
-	flag.StringVar(&flags.ModelArray, "ma", "", "List of different types models separate by space. Available options: SimpleStringTF, MnistSklearn, MushroomXgboot, CifarPytorch, MushroomLightgbm, MnistOnnx")
+	flag.StringVar(&flags.ModelArray, "ma", "", "List of different types models separate by space. Available options: SimpleStringTF, MnistSklearn, MushroomXgboost, CifarPytorch, MushroomLightgbm, MnistOnnx")
 	flag.IntVar(&flags.NumPerModel, "npm", 1, "Number of model name 1 to npm per model to generate")
 	// flag.StringVar(&flags.ModelVersion, "x", "", "Version of model. Default: Latest Version.")
 	// flag.IntVar(&flags.BatchSize, "b", 1, "Batch size. Default: 1.")
@@ -62,14 +63,17 @@ func parseFlags() Flags {
 func sendReqest(URL *string, req *pb.ModelInferRequest) {
 	// Directly send request to the gRPC server. Needs to import pb.go with grpc client interface
 	// protoc -I path/to/dependency_protos -go_out=plugins=grpc=./ path/*.proto
-	conn, err := grpc.Dial(*URL, grpc.WithInsecure())
+	// ctx, cancel := context.WithTimeout(context.Background(), 5  * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	conn, err := grpc.DialContext(ctx, *URL, grpc.WithBlock(), grpc.WithInsecure(), grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`))
+	//conn, err := grpc.Dial(*URL, grpc.WithInsecure(), grpc.WithBalancerName(roundrobin.Name))
 	if err != nil {
 		log.Fatalf("Couldn't connect to endpoint %s: %v", *URL, err)
 	}
 	defer conn.Close()
 	// Create client from gRPC server connection
 	client := pb.NewGRPCInferenceServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	modelInferResponse, err := client.ModelInfer(ctx, req)
 	if err != nil {
@@ -95,14 +99,14 @@ func genMultiModelRequest(ms string, n int) []proto.Message {
 				name := "mnist-sklearn-" + strconv.Itoa(i)
 				requests = append(requests, mskl.GetInferRequest(name))
 			}
-		case "MushroomXgboot":
+		case "MushroomXgboost":
 			mxgb := mc.MushroomXgboot{}
 			for i := 1; i <= n; i++ {
 				name := "mushroom-xgboost-" + strconv.Itoa(i)
 				requests = append(requests, mxgb.GetInferRequest(name))
 			}
 		case "CifarPytorch":
-			cifarpyt := mc.CifarPytorch{}
+			cifarpyt := mc.CifarPytorch{Image: mc.LoadCifarImage(1)}
 			for i := 1; i <= n; i++ {
 				name := "cifar-pytorch-" + strconv.Itoa(i)
 				requests = append(requests, cifarpyt.GetInferRequest(name))
@@ -115,7 +119,7 @@ func genMultiModelRequest(ms string, n int) []proto.Message {
 			}
 
 		case "MnistOnnx":
-			monnx := mc.MnistOnnx{}
+			monnx := mc.MnistOnnx{Image: mc.LoadMnistImage(0)}
 			for i := 1; i <= n; i++ {
 				name := "mnist-onnx-" + strconv.Itoa(i)
 				requests = append(requests, monnx.GetInferRequest(name))
@@ -143,14 +147,15 @@ func debugModelRequest(ms string, n int) []*pb.ModelInferRequest {
 				name := "mnist-sklearn-" + strconv.Itoa(i)
 				requests = append(requests, mskl.GetInferRequest(name))
 			}
-		case "MushroomXgboot":
+		case "MushroomXgboost":
 			mxgb := mc.MushroomXgboot{}
 			for i := 1; i <= n; i++ {
 				name := "mushroom-xgboost-" + strconv.Itoa(i)
 				requests = append(requests, mxgb.GetInferRequest(name))
 			}
 		case "CifarPytorch":
-			cifarpyt := mc.CifarPytorch{}
+			cifarpyt := mc.CifarPytorch{Image: mc.LoadCifarImage(1)}
+
 			for i := 1; i <= n; i++ {
 				name := "cifar-pytorch-" + strconv.Itoa(i)
 				requests = append(requests, cifarpyt.GetInferRequest(name))
@@ -163,13 +168,15 @@ func debugModelRequest(ms string, n int) []*pb.ModelInferRequest {
 			}
 
 		case "MnistOnnx":
-			monnx := mc.MnistOnnx{}
+			monnx := mc.MnistOnnx{Image: mc.LoadMnistImage(0)}
 			for i := 1; i <= n; i++ {
 				name := "mnist-onnx-" + strconv.Itoa(i)
 				requests = append(requests, monnx.GetInferRequest(name))
 			}
 		}
 	}
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(requests), func(i, j int) { requests[i], requests[j] = requests[j], requests[i] })
 	return requests
 }
 
@@ -177,8 +184,10 @@ func newTarget(FLAGS *Flags) *trunks.Gtarget {
 	var requests []proto.Message
 	if FLAGS.ModelArray != "" {
 		requests = genMultiModelRequest(FLAGS.ModelArray, FLAGS.NumPerModel)
-		// fmt.Println(requests)
+		rand.Seed(time.Now().UnixNano())
+		rand.Shuffle(len(requests), func(i, j int) { requests[i], requests[j] = requests[j], requests[i] })
 	}
+	fmt.Println("Created requests.")
 	return &trunks.Gtarget{
 		MethodName: "/inference.GRPCInferenceService/ModelInfer",
 		Requests:   requests[:],
@@ -186,24 +195,7 @@ func newTarget(FLAGS *Flags) *trunks.Gtarget {
 	}
 }
 
-// func modelFileScanner(modelList string) (*bufio.Scanner, *os.File) {
-// 	file, err := os.Open(modelList)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	scanner := bufio.NewScanner(file)
-// 	return scanner, file
-// }
-func main() {
-	FLAGS := parseFlags()
-
-	if FLAGS.Debug {
-		for _, req := range debugModelRequest(FLAGS.ModelArray, FLAGS.NumPerModel) {
-			sendReqest(&FLAGS.URL, req)
-		}
-		os.Exit(0)
-	}
-
+func targetBurn(target *trunks.Gtarget, FLAGS Flags) {
 	burner, err := trunks.NewBurner(
 		[]string{FLAGS.URL},                    // server address pool; simple round-robin
 		trunks.WithLooping(true),               // loop requests; false by default
@@ -215,18 +207,14 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	defer burner.Close()
-
-	target := newTarget(&FLAGS)
 	var metrics trunks.Metrics
 	startT := time.Now()
 	for res := range burner.Burn(target, uint64(FLAGS.QPS), time.Duration(FLAGS.Duration)*time.Second) {
 		metrics.Add(res)
-		// fmt.Println(res.Code, res.Latency, res.Error)
 	}
 	dur := time.Since(startT)
 	metrics.Close()
-
+	fmt.Printf("QPS: %d\n", FLAGS.QPS)
 	fmt.Printf("dur: %v\n", dur.Seconds())
 	fmt.Printf("earliest: %v\n", metrics.Earliest.Sub(startT).Nanoseconds())
 	fmt.Printf("latest: %v\n", metrics.Latest.Sub(startT).Nanoseconds())
@@ -238,5 +226,18 @@ func main() {
 	fmt.Printf("p99: %s\n", metrics.Latencies.P99)
 	fmt.Printf("mean: %s\n", metrics.Latencies.Mean)
 	fmt.Printf("max: %s\n", metrics.Latencies.Max)
+	defer burner.Close()
+}
 
+func main() {
+	FLAGS := parseFlags()
+
+	if FLAGS.Debug {
+		for _, req := range debugModelRequest(FLAGS.ModelArray, FLAGS.NumPerModel) {
+			sendReqest(&FLAGS.URL, req)
+		}
+		os.Exit(0)
+	}
+	target := newTarget(&FLAGS)
+	targetBurn(target, FLAGS)
 }

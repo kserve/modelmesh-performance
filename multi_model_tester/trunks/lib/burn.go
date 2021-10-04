@@ -44,7 +44,7 @@ func NewBurner(hosts []string, opts ...BurnOpt) (*Burner, error) {
 		numWorker: DefaultWorkers,
 		ctx:       context.Background(),
 	}
-	fmt.Println(&opts)
+	// fmt.Println(&opts)
 	for _, opt := range opts {
 		opt(b)
 	}
@@ -66,9 +66,12 @@ func NewBurner(hosts []string, opts ...BurnOpt) (*Burner, error) {
 			var err error
 
 			if len(cos) > 0 {
-				c, err = grpc.Dial(h, grpc.WithDefaultCallOptions(cos...), grpc.WithInsecure())
+				// c, err = grpc.Dial(h, grpc.WithDefaultCallOptions(cos...), grpc.WithInsecure())
+				c, err = grpc.DialContext(b.ctx, h, grpc.WithDefaultCallOptions(cos...), grpc.WithInsecure(), grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`))
 			} else {
-				c, err = grpc.Dial(h, grpc.WithInsecure())
+				// c, err = grpc.Dial(h, grpc.WithInsecure())
+				c, err = grpc.DialContext(b.ctx, h, grpc.WithInsecure(), grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`))
+
 			}
 
 			if err != nil {

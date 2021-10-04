@@ -36,6 +36,7 @@ type MushroomXgboot struct {
 
 type CifarPytorch struct {
 	//pytorch model
+	Image []float32
 }
 
 type MushroomLightgbm struct {
@@ -44,6 +45,7 @@ type MushroomLightgbm struct {
 
 type MnistOnnx struct {
 	//MnistOnxx model
+	Image []float32
 }
 
 func randIntByteArrays() [][]byte {
@@ -120,14 +122,7 @@ func (m *SimpleStringTF) GetInferRequest(modelName string) *pb.ModelInferRequest
 	}
 	// fmt.Println(modelName, inputData0)
 	// fmt.Println(modelName, inputData1)
-	inferOutputs := []*pb.ModelInferRequest_InferRequestedOutputTensor{
-		// {
-		// 	Name: "OUTPUT0",
-		// },
-		// {
-		// 	Name: "OUTPUT1",
-		// },
-	}
+	inferOutputs := []*pb.ModelInferRequest_InferRequestedOutputTensor{}
 
 	inferReq := pb.ModelInferRequest{
 		ModelName: modelName,
@@ -190,14 +185,13 @@ func (m *MushroomXgboot) GetInferRequest(modelName string) *pb.ModelInferRequest
 }
 
 func (m *CifarPytorch) GetInferRequest(modelName string) *pb.ModelInferRequest {
-	image := LoadCifarImage(1)
 	// fmt.Println(image)
 	inferInputs := []*pb.ModelInferRequest_InferInputTensor{
 		{
 			Name:     "INPUT__0",
 			Shape:    []int64{1, 3, 32, 32},
 			Datatype: "FP32",
-			Contents: &pb.InferTensorContents{Fp32Contents: image},
+			Contents: &pb.InferTensorContents{Fp32Contents: m.Image},
 		},
 	}
 	// inferOutputs := []*pb.ModelInferRequest_InferRequestedOutputTensor{}
@@ -228,19 +222,22 @@ func (m *MushroomLightgbm) GetInferRequest(modelName string) *pb.ModelInferReque
 }
 
 func (m *MnistOnnx) GetInferRequest(modelName string) *pb.ModelInferRequest {
-	image := LoadMnistImage(0)
 	inferInputs := []*pb.ModelInferRequest_InferInputTensor{
 		{
 			Name:     "Input3",
 			Shape:    []int64{1, 1, 28, 28},
 			Datatype: "FP32",
-			Contents: &inference.InferTensorContents{Fp32Contents: image},
+			Contents: &inference.InferTensorContents{Fp32Contents: m.Image},
 		},
 	}
 
+	inferOutputs := []*pb.ModelInferRequest_InferRequestedOutputTensor{}
 	inferReq := pb.ModelInferRequest{
 		ModelName: modelName,
-		Inputs:    inferInputs,
+		// ModelVersion: FLAGS.ModelVersion,
+		// ModelVersion: "",
+		Inputs:  inferInputs,
+		Outputs: inferOutputs,
 	}
 	return &inferReq
 }
