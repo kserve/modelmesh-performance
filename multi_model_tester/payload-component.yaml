@@ -1,0 +1,29 @@
+name: 'modelmesh-payload'
+description: Component for sending modelmesh predictor payloads
+inputs:
+- {name: model_type, type: String, description: "Model type for constructing payloads.", default: "MnistSklearn"}
+- {name: inference_server_url, type: String, description: "Inference Server URL", default: "dns:///modelmesh-serving.modelmesh-serving:8033"}
+- {name: number_of_models, type: String, description: "Number of model name 1 to npm per model to generate", default: "1"}
+- {name: number_of_workers, type: String, description: "Number of worker pool", default: "1"}
+- {name: duration, type: String, description: "Test duration in seconds", default: "1"}
+- {name: queries_per_second, type: String, description: "Constant Queries Per Second to hold", default: "1"}
+- {name: number_of_connections, type: String, description: "Number of connections to create.", default: "1"}
+implementation:
+    container:
+        image: aipipeline/modelmesh-payload:latest
+        command: ['./multi_model_test']
+        args:
+        - -ma
+        - {inputValue: model_type}
+        - -u
+        - {inputValue: inference_server_url}
+        - npm
+        - {inputValue: number_of_models}
+        - -wp
+        - {inputValue: number_of_workers}
+        - -dur
+        - {inputValue: duration}
+        - -qps
+        - {inputValue: queries_per_second}
+        - -cp
+        - {inputValue: number_of_connections}

@@ -1,0 +1,106 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: modelmesh-automation
+  annotations:
+    tekton.dev/output_artifacts: '{}'
+    tekton.dev/input_artifacts: '{}'
+    tekton.dev/artifact_bucket: mlpipeline
+    tekton.dev/artifact_endpoint: minio-service.kubeflow:9000
+    tekton.dev/artifact_endpoint_scheme: http://
+    tekton.dev/artifact_items: '{"modelmesh-payload": [], "modelmesh-predictor-deploy":
+      []}'
+    sidecar.istio.io/inject: "false"
+    pipelines.kubeflow.org/pipeline_spec: '{"description": "Model mesh deployment
+      and payload automation", "name": "modelmesh-automation"}'
+spec:
+  pipelineSpec:
+    tasks:
+    - name: modelmesh-predictor-deploy
+      taskSpec:
+        steps:
+        - name: main
+          args:
+          - '1'
+          - mnist-sklearn
+          - '1'
+          - '2'
+          - deploy_1mnist_sklearn_predictor.sh
+          command:
+          - ./deployNpredictors.sh
+          image: aipipeline/modelmesh-deploy:latest
+        metadata:
+          labels:
+            pipelines.kubeflow.org/cache_enabled: "false"
+            pipelines.kubeflow.org/pipelinename: ''
+            pipelines.kubeflow.org/generation: ''
+          annotations:
+            pipelines.kubeflow.org/component_spec: '{"description": "Component for
+              deploying modelmesh predictors", "implementation": {"container": {"args":
+              [{"inputValue": "parallel"}, {"inputValue": "prefix"}, {"inputValue":
+              "startID"}, {"inputValue": "endID"}, {"inputValue": "script"}], "command":
+              ["./deployNpredictors.sh"], "image": "aipipeline/modelmesh-deploy:latest"}},
+              "inputs": [{"default": "1", "description": "number of predictors to
+              be concurrelty created", "name": "parallel", "type": "String"}, {"default":
+              "mnist-sklearn", "description": "prefix to use in the predictor name",
+              "name": "prefix", "type": "String"}, {"default": "1", "description":
+              "the starting ID of a prefix-ID", "name": "startID", "type": "String"},
+              {"default": "2", "description": "the ending ID of the predictor deploy",
+              "name": "endID", "type": "String"}, {"default": "deploy_1mnist_sklearn_predictor.sh",
+              "description": "one of the scripts to deploy a predictors", "name":
+              "script", "type": "String"}], "name": "modelmesh-predictor-deploy"}'
+            tekton.dev/template: ''
+      timeout: 0s
+    - name: modelmesh-payload
+      taskSpec:
+        steps:
+        - name: main
+          args:
+          - -ma
+          - MnistSklearn
+          - -u
+          - dns:///modelmesh-serving.modelmesh-serving:8033
+          - npm
+          - '1'
+          - -wp
+          - '1'
+          - -dur
+          - '1'
+          - -qps
+          - '1'
+          - -cp
+          - '1'
+          command:
+          - ./multi_model_test
+          image: aipipeline/modelmesh-payload:latest
+        metadata:
+          labels:
+            pipelines.kubeflow.org/cache_enabled: "false"
+            pipelines.kubeflow.org/pipelinename: ''
+            pipelines.kubeflow.org/generation: ''
+          annotations:
+            pipelines.kubeflow.org/component_spec: '{"description": "Component for
+              sending modelmesh predictor payloads", "implementation": {"container":
+              {"args": ["-ma", {"inputValue": "model_type"}, "-u", {"inputValue":
+              "inference_server_url"}, "npm", {"inputValue": "number_of_models"},
+              "-wp", {"inputValue": "number_of_workers"}, "-dur", {"inputValue": "duration"},
+              "-qps", {"inputValue": "queries_per_second"}, "-cp", {"inputValue":
+              "number_of_connections"}], "command": ["./multi_model_test"], "image":
+              "aipipeline/modelmesh-payload:latest"}}, "inputs": [{"default": "MnistSklearn",
+              "description": "Model type for constructing payloads.", "name": "model_type",
+              "type": "String"}, {"default": "dns:///modelmesh-serving.modelmesh-serving:8033",
+              "description": "Inference Server URL", "name": "inference_server_url",
+              "type": "String"}, {"default": "1", "description": "Number of model
+              name 1 to npm per model to generate", "name": "number_of_models", "type":
+              "String"}, {"default": "1", "description": "Number of worker pool",
+              "name": "number_of_workers", "type": "String"}, {"default": "1", "description":
+              "Test duration in seconds", "name": "duration", "type": "String"}, {"default":
+              "1", "description": "Constant Queries Per Second to hold", "name": "queries_per_second",
+              "type": "String"}, {"default": "1", "description": "Number of connections
+              to create.", "name": "number_of_connections", "type": "String"}], "name":
+              "modelmesh-payload"}'
+            tekton.dev/template: ''
+      runAfter:
+      - modelmesh-predictor-deploy
+      timeout: 0s
+  timeout: 0s

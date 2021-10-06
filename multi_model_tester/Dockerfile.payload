@@ -1,0 +1,12 @@
+FROM golang:1.17.1-stretch as builder
+
+WORKDIR /go/src/app
+COPY . .
+
+RUN go build .
+
+FROM debian:stretch
+WORKDIR /app
+COPY --from=builder /go/src/app /app
+
+ENTRYPOINT ./multi_model_test

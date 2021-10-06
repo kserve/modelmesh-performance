@@ -18,6 +18,7 @@ apiVersion: serving.kserve.io/v1alpha1
 kind: Predictor
 metadata:
   name: ${name}
+  namespace: modelmesh-serving
 spec:
   modelType:
     name: lightgbm
@@ -34,7 +35,7 @@ EOF
     then
       break
     fi
-    status=`kubectl get predictor ${name} -o jsonpath='{.status.activeModelState}'`
+    status=`kubectl get predictor ${name} -n modelmesh-serving -o jsonpath='{.status.activeModelState}'`
     sleep 1
     try=`expr $try + 1`
   done
