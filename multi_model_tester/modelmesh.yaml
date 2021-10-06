@@ -12,23 +12,103 @@ metadata:
       []}'
     sidecar.istio.io/inject: "false"
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Model mesh deployment
-      and payload automation", "name": "modelmesh-automation"}'
+      and payload automation", "inputs": [{"default": "1", "name": "deployment_worker_num",
+      "optional": true, "type": "String"}, {"default": "mnist-sklearn", "name": "deployment_prefix",
+      "optional": true, "type": "String"}, {"default": "1", "name": "deployment_startID",
+      "optional": true, "type": "String"}, {"default": "1", "name": "deployment_endID",
+      "optional": true, "type": "String"}, {"default": "deploy_1mnist_sklearn_predictor.sh",
+      "name": "deployment_script_name", "optional": true, "type": "String"}, {"default":
+      "MnistSklearn", "name": "payload_model_type", "optional": true, "type": "String"},
+      {"default": "dns:///modelmesh-serving.modelmesh-serving:8033", "name": "payload_inference_server_url",
+      "optional": true, "type": "String"}, {"default": "1", "name": "payload_model_num",
+      "optional": true, "type": "String"}, {"default": "1", "name": "payload_worker_num",
+      "optional": true, "type": "String"}, {"default": "1", "name": "payload_query_duration_in_second",
+      "optional": true, "type": "String"}, {"default": "1", "name": "payload_queries_per_second",
+      "optional": true, "type": "String"}, {"default": "1", "name": "payload_max_connection_num",
+      "optional": true, "type": "String"}], "name": "modelmesh-automation"}'
 spec:
+  params:
+  - name: deployment_endID
+    value: '1'
+  - name: deployment_prefix
+    value: mnist-sklearn
+  - name: deployment_script_name
+    value: deploy_1mnist_sklearn_predictor.sh
+  - name: deployment_startID
+    value: '1'
+  - name: deployment_worker_num
+    value: '1'
+  - name: payload_inference_server_url
+    value: dns:///modelmesh-serving.modelmesh-serving:8033
+  - name: payload_max_connection_num
+    value: '1'
+  - name: payload_model_num
+    value: '1'
+  - name: payload_model_type
+    value: MnistSklearn
+  - name: payload_queries_per_second
+    value: '1'
+  - name: payload_query_duration_in_second
+    value: '1'
+  - name: payload_worker_num
+    value: '1'
   pipelineSpec:
+    params:
+    - name: deployment_endID
+      default: '1'
+    - name: deployment_prefix
+      default: mnist-sklearn
+    - name: deployment_script_name
+      default: deploy_1mnist_sklearn_predictor.sh
+    - name: deployment_startID
+      default: '1'
+    - name: deployment_worker_num
+      default: '1'
+    - name: payload_inference_server_url
+      default: dns:///modelmesh-serving.modelmesh-serving:8033
+    - name: payload_max_connection_num
+      default: '1'
+    - name: payload_model_num
+      default: '1'
+    - name: payload_model_type
+      default: MnistSklearn
+    - name: payload_queries_per_second
+      default: '1'
+    - name: payload_query_duration_in_second
+      default: '1'
+    - name: payload_worker_num
+      default: '1'
     tasks:
     - name: modelmesh-predictor-deploy
+      params:
+      - name: deployment_endID
+        value: $(params.deployment_endID)
+      - name: deployment_prefix
+        value: $(params.deployment_prefix)
+      - name: deployment_script_name
+        value: $(params.deployment_script_name)
+      - name: deployment_startID
+        value: $(params.deployment_startID)
+      - name: deployment_worker_num
+        value: $(params.deployment_worker_num)
       taskSpec:
         steps:
         - name: main
           args:
-          - '1'
-          - mnist-sklearn
-          - '1'
-          - '2'
-          - deploy_1mnist_sklearn_predictor.sh
+          - $(inputs.params.deployment_worker_num)
+          - $(inputs.params.deployment_prefix)
+          - $(inputs.params.deployment_startID)
+          - $(inputs.params.deployment_endID)
+          - $(inputs.params.deployment_script_name)
           command:
           - ./deployNpredictors.sh
           image: aipipeline/modelmesh-deploy:latest
+        params:
+        - name: deployment_endID
+        - name: deployment_prefix
+        - name: deployment_script_name
+        - name: deployment_startID
+        - name: deployment_worker_num
         metadata:
           labels:
             pipelines.kubeflow.org/cache_enabled: "false"
@@ -45,34 +125,57 @@ spec:
               "mnist-sklearn", "description": "prefix to use in the predictor name",
               "name": "prefix", "type": "String"}, {"default": "1", "description":
               "the starting ID of a prefix-ID", "name": "startID", "type": "String"},
-              {"default": "2", "description": "the ending ID of the predictor deploy",
+              {"default": "1", "description": "the ending ID of the predictor deploy",
               "name": "endID", "type": "String"}, {"default": "deploy_1mnist_sklearn_predictor.sh",
               "description": "one of the scripts to deploy a predictors", "name":
               "script", "type": "String"}], "name": "modelmesh-predictor-deploy"}'
             tekton.dev/template: ''
       timeout: 0s
     - name: modelmesh-payload
+      params:
+      - name: payload_inference_server_url
+        value: $(params.payload_inference_server_url)
+      - name: payload_max_connection_num
+        value: $(params.payload_max_connection_num)
+      - name: payload_model_num
+        value: $(params.payload_model_num)
+      - name: payload_model_type
+        value: $(params.payload_model_type)
+      - name: payload_queries_per_second
+        value: $(params.payload_queries_per_second)
+      - name: payload_query_duration_in_second
+        value: $(params.payload_query_duration_in_second)
+      - name: payload_worker_num
+        value: $(params.payload_worker_num)
       taskSpec:
         steps:
         - name: main
           args:
           - -ma
-          - MnistSklearn
+          - $(inputs.params.payload_model_type)
           - -u
-          - dns:///modelmesh-serving.modelmesh-serving:8033
+          - $(inputs.params.payload_inference_server_url)
           - npm
-          - '1'
+          - $(inputs.params.payload_model_num)
           - -wp
-          - '1'
+          - $(inputs.params.payload_worker_num)
           - -dur
-          - '1'
+          - $(inputs.params.payload_query_duration_in_second)
           - -qps
-          - '1'
+          - $(inputs.params.payload_queries_per_second)
           - -cp
-          - '1'
+          - $(inputs.params.payload_max_connection_num)
           command:
           - ./multi_model_test
           image: aipipeline/modelmesh-payload:latest
+        params:
+        - name: payload_inference_server_url
+        - name: payload_max_connection_num
+        - name: payload_model_num
+        - name: payload_model_type
+        - name: payload_queries_per_second
+        - name: payload_query_duration_in_second
+        - name: payload_worker_num
         metadata:
           labels:
             pipelines.kubeflow.org/cache_enabled: "false"

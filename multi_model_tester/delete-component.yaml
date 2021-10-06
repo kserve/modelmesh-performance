@@ -1,0 +1,15 @@
+name: 'modelmesh-predictor-delete'
+description: Component for deleting modelmesh predictors
+inputs:
+- {name: prefix, type: String, default: "mnist-sklearn"}
+metadata:
+implementation:
+  container:
+    image: bitnami/kubectl:1.20.11
+    command:
+    - sh
+    - -ec
+    - |
+      prefix=$0
+      kubectl get predictor -n modelmesh-serving | grep $prefix |  awk '{print $1}' | xargs kubectl delete predictor -n modelmesh-serving
+    - {inputValue: prefix}
