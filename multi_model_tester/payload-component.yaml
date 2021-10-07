@@ -1,4 +1,4 @@
-name: 'modelmesh-payload'
+name: 'modelmesh-send-payloads'
 description: Component for sending modelmesh predictor payloads
 inputs:
 - {name: model_type, type: String, description: "Model type for constructing payloads.", default: "MnistSklearn"}
@@ -17,7 +17,7 @@ implementation:
         - {inputValue: model_type}
         - -u
         - {inputValue: inference_server_url}
-        - npm
+        - -npm
         - {inputValue: number_of_models}
         - -wp
         - {inputValue: number_of_workers}

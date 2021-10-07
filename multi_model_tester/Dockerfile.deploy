@@ -4,4 +4,4 @@ WORKDIR /app
 USER root
 COPY . .
 
-ENTRYPOINT ./deploy_1simple_string_tf_predictor.sh
+ENTRYPOINT ./deployMorePredictors.sh

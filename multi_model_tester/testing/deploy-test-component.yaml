@@ -1,0 +1,18 @@
+name: 'modelmesh-predictor-deploy'
+description: Component for deploying modelmesh predictors
+inputs:
+- {name: parallel, type: String, description: "number of predictors to be concurrelty created", default: "1"}
+- {name: prefix, type: String, description: "prefix to use in the predictor name", default: "mnist-sklearn"}
+- {name: startID, type: String, description: "the starting ID of a prefix-ID", default: "1"}
+- {name: endID, type: String, description: "the ending ID of the predictor deploy", default: "1"}
+- {name: script, type: String, description: "one of the scripts to deploy a predictors", default: "deploy_1mnist_sklearn_predictor.sh"}
+implementation:
+    container:
+        image: aipipeline/modelmesh-deploy:latest
+        command: ['./deployNpredictors.sh']
+        args:
+        - {inputValue: parallel}
+        - {inputValue: prefix}
+        - {inputValue: startID}
+        - {inputValue: endID}
+        - {inputValue: script}

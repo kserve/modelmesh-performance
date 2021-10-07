@@ -1,78 +1,32 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: modelmesh-automation
+  name: modelmesh-paylood-automation
   annotations:
     tekton.dev/output_artifacts: '{}'
     tekton.dev/input_artifacts: '{}'
     tekton.dev/artifact_bucket: mlpipeline
     tekton.dev/artifact_endpoint: minio-service.kubeflow:9000
     tekton.dev/artifact_endpoint_scheme: http://
-    tekton.dev/artifact_items: '{"modelmesh-predictor-deploy": [], "modelmesh-send-payloads":
-      []}'
+    tekton.dev/artifact_items: '{"modelmesh-send-payloads": []}'
     sidecar.istio.io/inject: "false"
-    pipelines.kubeflow.org/pipeline_spec: '{"description": "Model mesh deployment
-      and payload automation", "inputs": [{"default": "10", "name": "num_of_additional_predictors",
-      "optional": true, "type": "String"}, {"default": "SimpleStringTF", "name": "deployment_model_type",
-      "optional": true, "type": "String"}, {"default": "SimpleStringTF CifarPytorch
-      MnistOnnx", "name": "payload_model_type", "optional": true, "type": "String"},
-      {"default": "60", "name": "payload_query_duration_in_seconds", "optional": true,
-      "type": "String"}], "name": "modelmesh-automation"}'
+    pipelines.kubeflow.org/pipeline_spec: '{"description": "Model mesh payload automation",
+      "inputs": [{"default": "SimpleStringTF CifarPytorch MnistOnnx", "name": "payload_model_type",
+      "optional": true, "type": "String"}, {"default": "60", "name": "payload_query_duration_in_seconds",
+      "optional": true, "type": "String"}], "name": "modelmesh-paylood-automation"}'
 spec:
   params:
-  - name: deployment_model_type
-    value: SimpleStringTF
-  - name: num_of_additional_predictors
-    value: '10'
   - name: payload_model_type
     value: SimpleStringTF CifarPytorch MnistOnnx
   - name: payload_query_duration_in_seconds
     value: '60'
   pipelineSpec:
     params:
-    - name: deployment_model_type
-      default: SimpleStringTF
-    - name: num_of_additional_predictors
-      default: '10'
     - name: payload_model_type
       default: SimpleStringTF CifarPytorch MnistOnnx
     - name: payload_query_duration_in_seconds
       default: '60'
     tasks:
-    - name: modelmesh-predictor-deploy
-      params:
-      - name: deployment_model_type
-        value: $(params.deployment_model_type)
-      - name: num_of_additional_predictors
-        value: $(params.num_of_additional_predictors)
-      taskSpec:
-        steps:
-        - name: main
-          args:
-          - $(inputs.params.num_of_additional_predictors)
-          - $(inputs.params.deployment_model_type)
-          command:
-          - ./deployMorePredictors.sh
-          image: aipipeline/modelmesh-deploy:latest
-        params:
-        - name: deployment_model_type
-        - name: num_of_additional_predictors
-        metadata:
-          labels:
-            pipelines.kubeflow.org/cache_enabled: "false"
-            pipelines.kubeflow.org/pipelinename: ''
-            pipelines.kubeflow.org/generation: ''
-          annotations:
-            pipelines.kubeflow.org/component_spec: '{"description": "Component for
-              deploying modelmesh predictors", "implementation": {"container": {"args":
-              [{"inputValue": "num_of_additional_predictors"}, {"inputValue": "model_type"}],
-              "command": ["./deployMorePredictors.sh"], "image": "aipipeline/modelmesh-deploy:latest"}},
-              "inputs": [{"default": "10", "description": "number of additional predictors
-              to be created", "name": "num_of_additional_predictors", "type": "String"},
-              {"default": "SimpleStringTF", "description": "model type for the predictors",
-              "name": "model_type", "type": "String"}], "name": "modelmesh-predictor-deploy"}'
-            tekton.dev/template: ''
-      timeout: 0s
     - name: modelmesh-send-payloads
       params:
       - name: payload_model_type
@@ -130,7 +84,5 @@ spec:
               to create.", "name": "number_of_connections", "type": "String"}], "name":
               "modelmesh-send-payloads"}'
             tekton.dev/template: ''
-      runAfter:
-      - modelmesh-predictor-deploy
       timeout: 0s
   timeout: 0s
