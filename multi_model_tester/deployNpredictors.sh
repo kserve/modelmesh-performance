@@ -65,4 +65,9 @@ do
   fi
   #echo ${slice[@]}
   ./"${script}" ${slice[@]}&
+  pids[${i}]=$!
+done
+
+for pid in ${pids[*]}; do
+    wait $pid
 done

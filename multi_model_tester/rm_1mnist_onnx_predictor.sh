@@ -18,6 +18,7 @@ apiVersion: serving.kserve.io/v1alpha1
 kind: Predictor
 metadata:
   name: ${name}
+  namespace: modelmesh-serving
 spec:
   modelType:
     name: onnx

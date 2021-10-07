@@ -1,0 +1,12 @@
+name: 'modelmesh-predictor-deploy'
+description: Component for deploying modelmesh predictors
+inputs:
+- {name: num_of_additional_predictors, type: String, description: "number of additional predictors to be created", default: "10"}
+- {name: model_type, type: String, description: "model type for the predictors", default: "SimpleStringTF"}
+implementation:
+    container:
+        image: aipipeline/modelmesh-deploy:latest
+        command: ['./deployMorePredictors.sh']
+        args:
+        - {inputValue: num_of_additional_predictors}
+        - {inputValue: model_type}

@@ -1,0 +1,57 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: modelmesh-deleting
+  annotations:
+    tekton.dev/output_artifacts: '{}'
+    tekton.dev/input_artifacts: '{}'
+    tekton.dev/artifact_bucket: mlpipeline
+    tekton.dev/artifact_endpoint: minio-service.kubeflow:9000
+    tekton.dev/artifact_endpoint_scheme: http://
+    tekton.dev/artifact_items: '{"modelmesh-predictor-delete": []}'
+    sidecar.istio.io/inject: "false"
+    pipelines.kubeflow.org/pipeline_spec: '{"description": "Model mesh delete automation",
+      "inputs": [{"default": "mnist-sklearn", "name": "delete_prefix", "optional":
+      true, "type": "String"}], "name": "modelmesh-deleting"}'
+spec:
+  params:
+  - name: delete_prefix
+    value: mnist-sklearn
+  pipelineSpec:
+    params:
+    - name: delete_prefix
+      default: mnist-sklearn
+    tasks:
+    - name: modelmesh-predictor-delete
+      params:
+      - name: delete_prefix
+        value: $(params.delete_prefix)
+      taskSpec:
+        steps:
+        - name: main
+          command:
+          - sh
+          - -ec
+          - |
+            prefix=$0
+            kubectl get predictor -n modelmesh-serving | grep $prefix |  awk '{print $1}' | xargs kubectl delete predictor -n modelmesh-serving
+          - $(inputs.params.delete_prefix)
+          image: bitnami/kubectl:1.20.11
+        params:
+        - name: delete_prefix
+        metadata:
+          labels:
+            pipelines.kubeflow.org/cache_enabled: "false"
+            pipelines.kubeflow.org/pipelinename: ''
+            pipelines.kubeflow.org/generation: ''
+          annotations:
+            pipelines.kubeflow.org/component_spec: '{"description": "Component for
+              deleting modelmesh predictors", "implementation": {"container": {"command":
+              ["sh", "-ec", "prefix=$0\nkubectl get predictor -n modelmesh-serving
+              | grep $prefix |  awk ''{print $1}'' | xargs kubectl delete predictor
+              -n modelmesh-serving\n", {"inputValue": "prefix"}], "image": "bitnami/kubectl:1.20.11"}},
+              "inputs": [{"default": "mnist-sklearn", "name": "prefix", "type": "String"}],
+              "name": "modelmesh-predictor-delete"}'
+            tekton.dev/template: ''
+      timeout: 0s
+  timeout: 0s
