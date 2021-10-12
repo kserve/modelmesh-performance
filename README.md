@@ -1,7 +1,11 @@
 # Introduction
-
-# Environment Setup
-
+Follow the instruction to run gRPC inference requests benchmark on a ModelMesh Serving instance on a Kubernetes cluster:
+1. [Setup ModelMesh Serving](#Setup-ModelMesh-Serving)
+2. [Create Example Models](#Model-Deployment)
+3. [Run gRPC Inference Benchmark](#Run-Inference-Requests)
+#### Optional but highly recommended:
+4. [Monitoring](#Monitoring(Optional))
+5. [Automation with KubeFlow Pipeline](#Test-with-KubeFlow-Pipeline-(Optional))
 ## Setup ModelMesh Serving
 To quickly stand up a ModelMesh Serving instance on a Kubernetes Cluster, please see [Quickstart](https://github.com/kserve/modelmesh-serving/blob/main/docs/quickstart.md) for detail.
 
@@ -10,19 +14,20 @@ Switch to the ModelMesah Serving namespace, assuming `modelmesh-serving` :
 ```bash
 kubectl config set-context --current --namespace modelmesh-serving
 ```
-We have included [scripts](./docs/Using-deployment-scripts) to deploy models concurrently to a ModelMesh Serving instance.
+We have included [scripts](./docs/README.md#Using-deployment-scripts) to deploy models concurrently to a ModelMesh Serving instance.
 Deploy 10 simple-string tensorflow models at concurrency of 5:
 ```bash
 cd multi_model_tester/
 ./deployNpredictors.sh 5 simple-string-tf 1 10 deploy_1simple_string_tf_predictor.sh
 ```
-Verify you 10 simple-string-tf are `Loaded`:
+Verify the 10 simple-string-tf-* models are `Loaded`:
 ```bash
 kubectl get predictors |grep simple-string-tf
 ```
 
 ## Run Inference Requests
-Using the [multi_model_tester](./docs/README.md##Using-the-multi_model_tester) to send inference requests to the 10 simple-string-tf-* models:
+On a local machine, assuming a separate terminal is running `kubectl port-forward svc/modelmesh-serving 8033`.
+Run the [multi_model_tester](./docs/README.md##Using-the-multi_model_tester) to send inference requests to the 10 simple-string-tf-* models.
 ```bash
 ./multi_model_test -ma "SimpleStringTF" -npm 10 -qps 1 -dur 10
 ```
