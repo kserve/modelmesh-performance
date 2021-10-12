@@ -120,43 +120,37 @@ func (m *SimpleStringTF) GetInferRequest(modelName string) *pb.ModelInferRequest
 			},
 		},
 	}
-	// fmt.Println(modelName, inputData0)
-	// fmt.Println(modelName, inputData1)
+
 	inferOutputs := []*pb.ModelInferRequest_InferRequestedOutputTensor{}
 
 	inferReq := pb.ModelInferRequest{
 		ModelName: modelName,
-		// ModelVersion: FLAGS.ModelVersion,
-		// ModelVersion: "",
-		Inputs:  inferInputs,
-		Outputs: inferOutputs,
+		Inputs:    inferInputs,
+		Outputs:   inferOutputs,
 	}
 	return &inferReq
 }
 
 func (m *MnistSklearn) GetInferRequest(modelName string) *pb.ModelInferRequest {
-	//{ "inputs": [{ "name": "predict", "shape": [1, 64], "datatype": "FP32", "data": [0.0, 0.0, 1.0, 11.0, 14.0, 15.0, 3.0, 0.0, 0.0, 1.0, 13.0, 16.0, 12.0, 16.0, 8.0, 0.0, 0.0, 8.0, 16.0, 4.0, 6.0, 16.0, 5.0, 0.0, 0.0, 5.0, 15.0, 11.0, 13.0, 14.0, 0.0, 0.0, 0.0, 0.0, 2.0, 12.0, 16.0, 13.0, 0.0, 0.0, 0.0, 0.0, 0.0, 13.0, 16.0, 16.0, 6.0, 0.0, 0.0, 0.0, 0.0, 16.0, 16.0, 16.0, 7.0, 0.0, 0.0, 0.0, 0.0, 11.0, 13.0, 12.0, 1.0, 0.0]}]}
+	// { "inputs": [{ "name": "predict", "shape": [1, 64], "datatype": "FP32", "data": [0.0, 0.0, 1.0, 11.0, 14.0, 15.0, 3.0, 0.0, 0.0, 1.0, 13.0, 16.0, 12.0, 16.0, 8.0, 0.0, 0.0, 8.0, 16.0, 4.0, 6.0, 16.0, 5.0, 0.0, 0.0, 5.0, 15.0, 11.0, 13.0, 14.0, 0.0, 0.0, 0.0, 0.0, 2.0, 12.0, 16.0, 13.0, 0.0, 0.0, 0.0, 0.0, 0.0, 13.0, 16.0, 16.0, 6.0, 0.0, 0.0, 0.0, 0.0, 16.0, 16.0, 16.0, 7.0, 0.0, 0.0, 0.0, 0.0, 11.0, 13.0, 12.0, 1.0, 0.0]}]}
 	inputData := []float32{0.0, 0.0, 1.0, 11.0, 14.0, 15.0, 3.0, 0.0, 0.0, 1.0, 13.0, 16.0, 12.0, 16.0, 8.0, 0.0, 0.0, 8.0, 16.0, 4.0, 6.0, 16.0, 5.0, 0.0, 0.0, 5.0, 15.0, 11.0, 13.0, 14.0, 0.0, 0.0, 0.0, 0.0, 2.0, 12.0, 16.0, 13.0, 0.0, 0.0, 0.0, 0.0, 0.0, 13.0, 16.0, 16.0, 6.0, 0.0, 0.0, 0.0, 0.0, 16.0, 16.0, 16.0, 7.0, 0.0, 0.0, 0.0, 0.0, 11.0, 13.0, 12.0, 1.0, 0.0}
 	inferInputs := []*pb.ModelInferRequest_InferInputTensor{
 		{
 			Name:     "predict",
 			Datatype: "FP32",
 			Shape:    []int64{1, 64},
-			//Need to get the data right
 			Contents: &pb.InferTensorContents{
 				Fp32Contents: inputData,
 			},
 		},
 	}
-	// fmt.Println(modelName, inputData)
+
 	inferOutputs := []*pb.ModelInferRequest_InferRequestedOutputTensor{}
 
 	inferReq := pb.ModelInferRequest{
 		ModelName: modelName,
-		// ModelVersion: FLAGS.ModelVersion,
-		// ModelVersion: "",
-		Inputs:  inferInputs,
-		Outputs: inferOutputs,
+		Inputs:    inferInputs,
+		Outputs:   inferOutputs,
 	}
 	return &inferReq
 
@@ -175,17 +169,14 @@ func (m *MushroomXgboot) GetInferRequest(modelName string) *pb.ModelInferRequest
 	inferOutputs := []*pb.ModelInferRequest_InferRequestedOutputTensor{}
 	inferReq := pb.ModelInferRequest{
 		ModelName: modelName,
-		// ModelVersion: FLAGS.ModelVersion,
-		// ModelVersion: "",
-		Inputs:  inferInputs,
-		Outputs: inferOutputs,
+		Inputs:    inferInputs,
+		Outputs:   inferOutputs,
 	}
 
 	return &inferReq
 }
 
 func (m *CifarPytorch) GetInferRequest(modelName string) *pb.ModelInferRequest {
-	// fmt.Println(image)
 	inferInputs := []*pb.ModelInferRequest_InferInputTensor{
 		{
 			Name:     "INPUT__0",
@@ -194,7 +185,7 @@ func (m *CifarPytorch) GetInferRequest(modelName string) *pb.ModelInferRequest {
 			Contents: &pb.InferTensorContents{Fp32Contents: m.Image},
 		},
 	}
-	// inferOutputs := []*pb.ModelInferRequest_InferRequestedOutputTensor{}
+
 	inferReq := pb.ModelInferRequest{
 		ModelName: modelName,
 		Inputs:    inferInputs,
@@ -234,10 +225,8 @@ func (m *MnistOnnx) GetInferRequest(modelName string) *pb.ModelInferRequest {
 	inferOutputs := []*pb.ModelInferRequest_InferRequestedOutputTensor{}
 	inferReq := pb.ModelInferRequest{
 		ModelName: modelName,
-		// ModelVersion: FLAGS.ModelVersion,
-		// ModelVersion: "",
-		Inputs:  inferInputs,
-		Outputs: inferOutputs,
+		Inputs:    inferInputs,
+		Outputs:   inferOutputs,
 	}
 	return &inferReq
 }

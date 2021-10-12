@@ -1,19 +1,12 @@
 #!/bin/bash
 
-# if [ $# -ne 1 ]
-# then
-#   echo "USAGE: $0 [name]"
-#   echo "     name - name of the predictor"
-#   exit
-# fi
-
 list=$@
 RETRY=20
 for name in $list
 do
   startT=`date +%H:%M:%S`
   startEpoc=`date +%s`
-cat <<EOF |kubectl delete -f - >>./deploy.log
+cat <<EOF |kubectl delete -f - >>./rm.log
 apiVersion: serving.kserve.io/v1alpha1
 kind: Predictor
 metadata:
