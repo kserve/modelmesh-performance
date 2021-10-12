@@ -48,4 +48,4 @@ Monitoring ModelMesh Serving metrics using Prometheus and Grafana Dashboard is h
 
 
 ## Test with KubeFlow Pipeline (Optional)
-Deploying models and sending inference request can be automated using KubeFlow Pipeline. See [Setup KubeFlow Tecton](./docs/kfp-tecton/README.md##Setup-KubeFlow-Tecton) for detail.
+Deploying models and sending inference request can be automated using KubeFlow Pipeline. See [Setup KubeFlow Tekton](./docs/kfp-tekton/README.md##Setup-KubeFlow-Tekton) for detail.
