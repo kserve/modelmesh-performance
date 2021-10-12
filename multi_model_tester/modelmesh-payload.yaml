@@ -12,27 +12,34 @@ metadata:
     sidecar.istio.io/inject: "false"
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Model mesh payload automation",
       "inputs": [{"default": "SimpleStringTF CifarPytorch MnistOnnx", "name": "payload_model_type",
-      "optional": true, "type": "String"}, {"default": "60", "name": "payload_query_duration_in_seconds",
+      "optional": true, "type": "String"}, {"default": "60", "name": "payload_duration_in_seconds",
+      "optional": true, "type": "String"}, {"default": "10", "name": "payload_query_per_second",
       "optional": true, "type": "String"}], "name": "modelmesh-paylood-automation"}'
 spec:
   params:
+  - name: payload_duration_in_seconds
+    value: '60'
   - name: payload_model_type
     value: SimpleStringTF CifarPytorch MnistOnnx
-  - name: payload_query_duration_in_seconds
-    value: '60'
+  - name: payload_query_per_second
+    value: '10'
   pipelineSpec:
     params:
+    - name: payload_duration_in_seconds
+      default: '60'
     - name: payload_model_type
       default: SimpleStringTF CifarPytorch MnistOnnx
-    - name: payload_query_duration_in_seconds
-      default: '60'
+    - name: payload_query_per_second
+      default: '10'
     tasks:
     - name: modelmesh-send-payloads
       params:
+      - name: payload_duration_in_seconds
+        value: $(params.payload_duration_in_seconds)
       - name: payload_model_type
         value: $(params.payload_model_type)
-      - name: payload_query_duration_in_seconds
-        value: $(params.payload_query_duration_in_seconds)
+      - name: payload_query_per_second
+        value: $(params.payload_query_per_second)
       taskSpec:
         steps:
         - name: main
@@ -46,17 +53,18 @@ spec:
           - -wp
           - '100'
           - -dur
-          - $(inputs.params.payload_query_duration_in_seconds)
+          - $(inputs.params.payload_duration_in_seconds)
           - -qps
-          - '400'
+          - $(inputs.params.payload_query_per_second)
           - -cp
           - '100'
           command:
           - ./multi_model_test
           image: aipipeline/modelmesh-payload:latest
         params:
+        - name: payload_duration_in_seconds
         - name: payload_model_type
-        - name: payload_query_duration_in_seconds
+        - name: payload_query_per_second
         metadata:
           labels:
             pipelines.kubeflow.org/cache_enabled: "false"

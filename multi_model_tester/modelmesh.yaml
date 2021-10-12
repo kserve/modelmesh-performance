@@ -14,10 +14,10 @@ metadata:
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Model mesh deployment
       and payload automation", "inputs": [{"default": "10", "name": "num_of_additional_predictors",
       "optional": true, "type": "String"}, {"default": "SimpleStringTF", "name": "deployment_model_type",
-      "optional": true, "type": "String"}, {"default": "SimpleStringTF CifarPytorch
-      MnistOnnx", "name": "payload_model_type", "optional": true, "type": "String"},
-      {"default": "60", "name": "payload_query_duration_in_seconds", "optional": true,
-      "type": "String"}], "name": "modelmesh-automation"}'
+      "optional": true, "type": "String"}, {"default": "SimpleStringTF", "name": "payload_model_type",
+      "optional": true, "type": "String"}, {"default": "60", "name": "payload_query_duration_in_seconds",
+      "optional": true, "type": "String"}, {"default": "1000", "name": "payload_number_of_models",
+      "optional": true, "type": "String"}], "name": "modelmesh-automation"}'
 spec:
   params:
   - name: deployment_model_type
@@ -25,7 +25,9 @@ spec:
   - name: num_of_additional_predictors
     value: '10'
   - name: payload_model_type
-    value: SimpleStringTF CifarPytorch MnistOnnx
+    value: SimpleStringTF
+  - name: payload_number_of_models
+    value: '1000'
   - name: payload_query_duration_in_seconds
     value: '60'
   pipelineSpec:
@@ -35,7 +37,9 @@ spec:
     - name: num_of_additional_predictors
       default: '10'
     - name: payload_model_type
-      default: SimpleStringTF CifarPytorch MnistOnnx
+      default: SimpleStringTF
+    - name: payload_number_of_models
+      default: '1000'
     - name: payload_query_duration_in_seconds
       default: '60'
     tasks:
@@ -77,6 +81,8 @@ spec:
       params:
       - name: payload_model_type
         value: $(params.payload_model_type)
+      - name: payload_number_of_models
+        value: $(params.payload_number_of_models)
       - name: payload_query_duration_in_seconds
         value: $(params.payload_query_duration_in_seconds)
       taskSpec:
@@ -88,7 +94,7 @@ spec:
           - -u
           - dns:///modelmesh-serving.modelmesh-serving:8033
           - -npm
-          - '5000'
+          - $(inputs.params.payload_number_of_models)
           - -wp
           - '100'
           - -dur
@@ -102,6 +108,7 @@ spec:
           image: aipipeline/modelmesh-payload:latest
         params:
         - name: payload_model_type
+        - name: payload_number_of_models
         - name: payload_query_duration_in_seconds
         metadata:
           labels:
