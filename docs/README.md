@@ -23,7 +23,7 @@ To clean up the models:
 ./rmNpredictors.sh 30 simple-string-tf 1000 2000 rm_1simple_string_tf_predictor.sh
 ```
 ## Using the multi_model_tester
-The `multi_model_tester` is written in Go and utilizes [Trunks](https://github.com/straightdave/trunks.git) library that is modified to uses round_robbin loadbalancer policy and targets `dns:///modelmesh-serving:8033`.
+The `multi_model_tester` is written in Go and utilizes a modified [Trunks](https://github.com/straightdave/trunks.git) library that uses round_robbin loadbalancer policy and targets `dns:///modelmesh-serving:8033`.
 
 The tester generates a mix of up to six heterogeneous model inference requests to stress the [inference request gRPC api](https://github.com/kserve/kserve/blob/master/docs/predict-api/v2/required_api.md#grpc) of ModelMesh Serving instance.
 

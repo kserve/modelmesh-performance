@@ -3,9 +3,8 @@ Follow the instruction to run gRPC inference requests benchmark on a ModelMesh S
 1. [Setup ModelMesh Serving](#Setup-ModelMesh-Serving)
 2. [Create Example Models](#Model-Deployment)
 3. [Run gRPC Inference Benchmark](#Run-Inference-Requests)
-#### Optional but highly recommended:
-4. [Monitoring](#Monitoring(Optional))
-5. [Automation with KubeFlow Pipeline](#Test-with-KubeFlow-Pipeline-(Optional))
+4. [Monitoring](#Monitoring)
+5. [Automation with KubeFlow Pipeline](#Test-with-KubeFlow-Pipeline)
 ## Setup ModelMesh Serving
 To quickly stand up a ModelMesh Serving instance on a Kubernetes Cluster, please see [Quickstart](https://github.com/kserve/modelmesh-serving/blob/main/docs/quickstart.md) for detail.
 
@@ -48,9 +47,9 @@ mean: 125.253537ms
 max: 293.500996ms
 ```
 
-## Monitoring (Optional)
+## Monitoring
 Monitoring ModelMesh Serving metrics using Prometheus and Grafana Dashboard is highly recommended. See [monitoring](./docs/monitoring/README.md##Setup-Prometheus-Operator) for detail.
 
 
-## Test with KubeFlow Pipeline (Optional)
+## Test with KubeFlow Pipeline
 Deploying models and sending inference request can be automated using KubeFlow Pipeline. See [Setup KubeFlow Tekton](./docs/kfp-tekton/README.md##Setup-KubeFlow-Tekton) for detail.
