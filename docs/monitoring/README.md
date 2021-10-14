@@ -7,9 +7,8 @@ The steps involves:
 3. [Create Grafana dashboard](#Import-Grafana-Dashboard)
 ## Setup Prometheus Operator
 The Prometheus Operator is the easiest way to setup both Prometheus and Grafana natively in a Kubernetes cluster. Please setup using the [Quickstart](https://github.com/prometheus-operator/kube-prometheus#quickstart) instruction.
-
-By default, the operator setups RBAC rules to enable monitoring the `default` and `kube-system` namespaces to collect Kubernetes and node metrics.
-
+By default, the operator setups RBAC rules to enable monitoring the `default`, `monitoring` and `kube-system` namespaces to collect Kubernetes and node metrics.
+### Monitor Additional Namespace
 To monitor the `modelmeash-serving` namespace, add the following to the the `manifests/prometheus-roleBindingSpecificNamespaces.yaml`:
 
 ```yaml
@@ -73,7 +72,19 @@ and `manifests/prometheus-roleSpecificNamespaces.yaml` yamls in the cloned kube-
     - list
     - watch
 ```
-
+### Increase Retention Period
+By default, Prometheus only keeps 24 hours of history record. To increase the retention period modify `manifests/prometheus-prometheus.yaml` by adding:
+```yaml
+spec:
+  ...
+  resources:
+    requests:
+      memory: 400Mi
+  # To change the retention period to 7 days, add the line below
+  retention: 7d
+  ...
+```
+Other configurable Prometheus specs are listed [here](https://github.com/prometheus-operator/prometheus-operator/blob/44086aa3ab37715b058ea67fad1fd3a963380f54/Documentation/api.md#prometheusspec)
 ## Create ServiceMonitor CRD
 Create a ServiceMonitor to monitor the modelmesh-serving service using the [CRD](./servicemonitor.yaml).
 ```bash
