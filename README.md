@@ -28,23 +28,28 @@ kubectl get predictors |grep simple-string-tf
 On a local machine, assuming a separate terminal is running `kubectl port-forward svc/modelmesh-serving 8033`.
 Run the [multi_model_tester](./docs/README.md##Using-the-multi_model_tester) to send inference requests to the 10 simple-string-tf-* models.
 ```bash
-./multi_model_test -ma "SimpleStringTF" -npm 10 -qps 1 -dur 10
+./multi_model_test -ma "SimpleStringTF" -npm 10 -qps 100 -dur 10
 ```
-Depending on where the driver is run, the numbers may vary:
+
+Running the driver from inside the Kubernetes cluster and namespace where the Modelmesh Serving instance is installed:
+```bash
+KUBECTL_COMMAND_HEADERS=false kubectl run -it --rm modelmesh-payload --restart=Never --image=aipipeline/modelmesh-payload:latest --command --namespace modelmesh-serving -- ./multi_model_test -ma 'SimpleStringTF' -u dns:///modelmesh-serving.modelmesh-serving:8033 -npm '10'  -qps '100' -dur '10'
 ```
-Created requests.
-QPS: 1
-dur: 9.097220044
-earliest: 79102
-latest: 9000005765
-end: 9097189999
-reqs: 10
+
+Depending on where the driver is run, output should be similar to:
+```
+QPS: 100
+dur: 9.993041819
+earliest: 76448
+latest: 9990014958
+end: 9992985483
+reqs: 1000
 success: 1.000000
-p50: 107.056888ms
-p95: 116.525302ms
-p99: 116.525302ms
-mean: 125.253537ms
-max: 293.500996ms
+p50: 3.58451ms
+p95: 10.701875ms
+p99: 29.714907ms
+mean: 4.733809ms
+max: 37.563672ms
 ```
 
 ## Monitoring
