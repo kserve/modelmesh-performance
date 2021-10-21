@@ -26,7 +26,7 @@ kubectl get predictors |grep simple-string-tf
 
 ## Run Inference Requests
 On a local machine, assuming a separate terminal is running `kubectl port-forward svc/modelmesh-serving 8033`.
-Run the [multi_model_tester](./docs/README.md##Using-the-multi_model_tester) to send inference requests to the 10 simple-string-tf-* models.
+Run the [multi_model_tester](./docs/README.md#build-the-tester-binary) to send inference requests to the 10 simple-string-tf-* models.
 ```bash
 ./multi_model_test -ma "SimpleStringTF" -npm 10 -qps 100 -dur 10
 ```
