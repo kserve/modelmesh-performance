@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: prometheus-server
+  name: prometheus-service
+spec:
+  ports:
+  - port: 9090
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    app: prometheus-server
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-server-configmap
+data:
+  prometheus.yaml: |
+    # my global config
+    global:
+      scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+      evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+      # scrape_timeout is set to the global default (10s).
+
+    # Alertmanager configuration
+    alerting:
+      alertmanagers:
+      - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+    # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+    rule_files:
+      # - "first_rules.yml"
+      # - "second_rules.yml"
+
+    # A scrape configuration containing exactly one endpoint to scrape:
+    # Here it's Prometheus itself.
+    scrape_configs:
+      # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+      - job_name: 'prometheus'
+
+        # metrics_path defaults to '/metrics'
+        # scheme defaults to 'http'.
+
+        static_configs:
+        - targets: ['localhost:9090']
+
+      - job_name: '579cb5bc9b-fj5s4'
+        honor_labels: true
+        scheme: 'https'
+        static_configs:
+        # need to change to the pushgateway IP.
+        - targets: ['172.30.76.196:2112']
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-deployment
+  labels:
+    app: prometheus-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-server
+  template:
+    metadata:
+      labels:
+        app: prometheus-server
+    spec:
+      containers:
+        - name: prometheus
+          image: prom/prometheus
+          args:
+            - "--config.file=/etc/prometheus/prometheus.yaml"
+            - "--storage.tsdb.path=/data"
+            - "--enable-feature=remote-write-receiver"
+            - "--web.enable-admin-api"
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: prometheus-server-config-volume
+              mountPath: /etc/prometheus/
+            - name: prometheus-server-data-volume
+              mountPath: /data
+      volumes:
+        - name: prometheus-server-config-volume
+          configMap:
+            defaultMode: 420
+            name: prometheus-server-configmap
+        - name: prometheus-server-data-volume
+          persistentVolumeClaim:
+            claimName: prometheus-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: prometheus-pvc
+spec:
+ accessModes:
+   - ReadWriteMany
+ resources:
+   requests:
+     storage: 20Gi
+ storageClassName: ibmc-file-gold-gid
