@@ -2,7 +2,7 @@
 
 This is inspired by the internal Howitzer project, started by the Watson NLU team at IBM.
 
-Howitzer is a collection of Bash/Python scripts which can be used for automating K6 load tests, scraping deployment metrics from Sysdig, and pushing results to MLFLow. Its primary purpose is to sequentially run a set of load tests and seamlessly aggregate the results into multiple human and machine readable formats, thereby reducing the tediousness of traversing a high number of load testing parameters or Kubernetes/Openshift configurations. A few examples of the types of parameters which Howitzer seeks to automate are given below.
+Howitzer is a collection of Bash/Python scripts which can be used for automating K6 load tests, and has the ability to scrape metrics and send to MLFlow (not yet implemented). Its primary purpose is to sequentially run a set of load tests and seamlessly aggregate the results into multiple human and machine readable formats, thereby reducing the tediousness of traversing a high number of load testing parameters or Kubernetes/Openshift configurations. A few examples of the types of parameters which Howitzer seeks to automate are given below.
 
 - Non-iterable K6 parameters, i.e. duration and virtual users.
 
@@ -17,6 +17,31 @@ When Howitzer is run, the bash script will create directories `render`, `results
 - `render` stores the "exploded" k6 tests using the k6 template specified in the test config for each k6_opts combination.
 - Then the script will run each individual k6 test in this `render` directory, storing the human readble results as text in `results` directory.
 - It will also store the corresponding json file of the result into `summary` directory that we can later use for MLFlow.
+
+Example test config:
+```json
+{
+  "rendering_configs": {
+    "title":"K6 Model Mesh Inference Tests",
+    "description": "Example to launch groups of perf tests."
+  },
+  "test_configs": [
+    {
+      "name": "0-warmup",
+      "description": "Warm up sklearn model for 30s with 1 vu and 2vus",
+      "template": "grpc/script_grpc_skmnist.js",
+      "payload": "1by64payloadSklearn.json",
+      "base_url": "localhost:8033",
+      "k6_opts": {
+        "vus":[1,5],
+        "duration":"30s"
+      }
+    }
+  ]
+}
+```
+This config will explode into 2 individual k6 tests as individual files in the `render` folder: Test 0 with 1 vu, duration 30s. And test 1 with 5vus, duration 30s.
+Both tests use the same payload `1by64payloadSklearn.json`, same base_url `localhost:8033` and the same test template `grpc/script_grpc_skmnist.js`.
 
 ## Local Howitzer run
 Howitzer uses [Pipenv](https://pipenv.pypa.io/en/latest/install/#installing-pipenv) to manage it's python environment. After installing pipenv, install dependencies with pipenv sync, then use pipenv run or pipenv shell to execute scripts within the Pipenv managed environment.
