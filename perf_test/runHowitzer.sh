@@ -33,13 +33,20 @@ for TEST in render/*.js; do
   emphasize "Beginning K6 test: ${TEST}"
   RESULT_FILE=results/`basename "${TEST%.*}".txt`
   SUMMARY_FILE_JSON=summary/`basename "${TEST%.*}".json`
-  K6_PROMETHEUS_REMOTE_URL=http://localhost:9090/api/v1/write
+  K6_PROMETHEUS_REMOTE_URL=${K6_PROMETHEUS_REMOTE_URL}
 
   # Write StartTime to File
   date >> $RESULT_FILE
   # Then, run the test itself, dumping the important information into the result file
-  # k6 run $TEST --summary-export=$SUMMARY_FILE_JSON >> $RESULT_FILE
-  ./k6_test/k6 run $TEST --summary-export=$SUMMARY_FILE_JSON >> $RESULT_FILE -o output-prometheus-remote
+
+  if [[ -z $K6_PROMETHEUS_REMOTE_URL ]]; then
+    echo "No K6_PROMETHEUS_REMOTE_URL was set, running default k6"
+    k6 run $TEST --summary-export=$SUMMARY_FILE_JSON >> $RESULT_FILE
+  else
+    echo "Sending K6 metrics to K6_PROMETHEUS_REMOTE_URL at ${K6_PROMETHEUS_REMOTE_URL}"
+    ./k6_test/k6 run $TEST --summary-export=$SUMMARY_FILE_JSON >> $RESULT_FILE -o output-prometheus-remote
+  fi
+  
   # Write EndTime to File
   date >> $RESULT_FILE;
 
