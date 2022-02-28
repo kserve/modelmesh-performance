@@ -52,12 +52,12 @@ export TEMPLATE_DIR=k6_test/
 export CONFIG_FILE=perf_test/configs/inference-test.json
 ```
 
-Optionally, to send k6 metrics to an available Prometheus that accepts remote write, set the env var `K6_PROMETHEUS_REMOTE_URL`. This example assumes the Prometheus service is running and port forwarded to at localhost:9090 
+- Optionally, to send k6 metrics to an available Prometheus that accepts remote write, set the env var `K6_PROMETHEUS_REMOTE_URL`. This example assumes the Prometheus service is running and port forwarded to at localhost:9090 
 ```sh
 export K6_PROMETHEUS_REMOTE_URL=http://localhost:9090/api/v1/write
 ```
 
-Now, you can run Howitzer with:
+- Now, you can run Howitzer with:
 ```sh
 ./perf_test/runHowitzer.sh
 ```
