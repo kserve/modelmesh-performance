@@ -1,6 +1,7 @@
-# Performance Test - Running Howitzer
+# Performance Test
 
 This is inspired by the internal Howitzer project, started by the Watson NLU team at IBM.
+
 Howitzer is a collection of Bash/Python scripts which can be used for automating K6 load tests, scraping deployment metrics from Sysdig, and pushing results to MLFLow. Its primary purpose is to sequentially run a set of load tests and seamlessly aggregate the results into multiple human and machine readable formats, thereby reducing the tediousness of traversing a high number of load testing parameters or Kubernetes/Openshift configurations. A few examples of the types of parameters which Howitzer seeks to automate are given below.
 
 - Non-iterable K6 parameters, i.e. duration and virtual users.
