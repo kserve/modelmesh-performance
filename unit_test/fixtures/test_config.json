@@ -1,0 +1,24 @@
+{
+  "sysdig_config": "test sysdig config",
+  "rendering_configs": {
+      "title": "test test"
+  },
+  "test_configs": [
+      {
+          "name": "test_test",
+          "description": "test",
+          "template": "test_template.js",
+          "payload": "test.json",
+          "base_url": "https://test.com",
+          "log_errors": true,
+          "model_name": "test_model",
+          "k6_opts": {
+              "vus": [5, 10, 25, 50],
+              "duration": "1h",
+              "insecureSkipTLSVerify": true,
+              "noConnectionReuse": true,
+              "noVUConnectionReuse": true
+          }
+      }
+  ]
+}

@@ -44,6 +44,14 @@ Example test config:
 This config will explode into 2 individual k6 tests as individual files in the `render` folder: Test 0 with 1 vu, duration 30s. And test 1 with 5vus, duration 30s.
 Both tests use the same payload `1by64payloadSklearn.json`, same base_url `localhost:8033` and the same test template `grpc/script_grpc_skmnist.js`.
 
+## Unit testing the Howitzer rendered script
+
+We also wrote unit tests for the script. The tests are in `unit_test` folder, and can be tested with:
+
+```python
+python3 -m unittest unit_test/k6/test_renderer.py
+```
+
 ## Local Howitzer run
 Howitzer uses [Pipenv](https://pipenv.pypa.io/en/latest/install/#installing-pipenv) to manage its python environment. After installing pipenv, install dependencies with pipenv sync, then use pipenv run or pipenv shell to execute scripts within the Pipenv managed environment.
 
