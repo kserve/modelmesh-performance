@@ -32,6 +32,7 @@ Example test config:
       "template": "grpc/script_grpc_skmnist.js",
       "payload": "1by64payloadSklearn.json",
       "base_url": "localhost:8033",
+      "model_name": "snapml-mnist-svm",
       "k6_opts": {
         "vus":[1,5],
         "duration":"30s"
@@ -44,7 +45,7 @@ This config will explode into 2 individual k6 tests as individual files in the `
 Both tests use the same payload `1by64payloadSklearn.json`, same base_url `localhost:8033` and the same test template `grpc/script_grpc_skmnist.js`.
 
 ## Local Howitzer run
-Howitzer uses [Pipenv](https://pipenv.pypa.io/en/latest/install/#installing-pipenv) to manage it's python environment. After installing pipenv, install dependencies with pipenv sync, then use pipenv run or pipenv shell to execute scripts within the Pipenv managed environment.
+Howitzer uses [Pipenv](https://pipenv.pypa.io/en/latest/install/#installing-pipenv) to manage its python environment. After installing pipenv, install dependencies with pipenv sync, then use pipenv run or pipenv shell to execute scripts within the Pipenv managed environment.
 
 - To explode and render the template into k6 scripts locally, set the `CONFIG_FILE` and `TEMPLATE_DIR` env vars to the name of the file in the configs directory and the test template dir respectively that you want to run.
 ```sh
