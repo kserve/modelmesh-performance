@@ -57,7 +57,7 @@ def explode_test(test):
     """Blows up a single test configuration containing any number of valid iterable
     params. External parameters, which are the params not directly rendered into
     a K6 template (i.e. the name of the template) are duplicated across all resulting
-    subtests when a iterable parameter is exploded into multiple K6 cofigurations.
+    subtests when a iterable parameter is exploded into multiple K6 configurations.
     A toy example of how the explosion process produces multiple K6 tests for
     multiple iterable params is shown below.
 

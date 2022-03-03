@@ -1,5 +1,5 @@
 """This file contains the constants related to K6 and Howitzer parameters. The
-large dictionary for K6 options is expecially important because it affects
+large dictionary for K6 options is especially important because it affects
 how the Javascript will render. Be careful when making changes, and make sure
 that all unit tests still pass if you make edits to this file.
 """
