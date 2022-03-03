@@ -7,12 +7,12 @@ const client = new grpc.Client();
 client.load([], '../k6_test/kfs_inference_v2.proto');
 const inputsData = JSON.parse(open(`../k6_test/payloads/{{payload}}`));
 let params = {
-  tags: { model_name: `snapml-mnist-svm` },
+  tags: { model_name: `{{model_name}}` },
 }
 export default () => {
   client.connect('{{base_url}}', { plaintext: true });
   const data = { 
-    "model_name": "snapml-mnist-svm",
+    "model_name": "{{model_name}}",
     "inputs": inputsData["inputs"]
   };
   const response = client.invoke('inference.GRPCInferenceService/ModelInfer', data, params);

@@ -43,6 +43,6 @@ K6_VALID_OPTS = {
 
 # Parameters corresponding to each Howtizer test in the config options.
 HOWITZER_PARAMS = {
-    'required': ['name', 'template', 'base_url', 'k6_opts'],
+    'required': ['name', 'template', 'base_url', 'k6_opts', 'model_name'],
     'optional': ['payload', 'description']
 }
