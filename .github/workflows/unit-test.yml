@@ -1,0 +1,27 @@
+name: k6 Unit Test
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/**'
+      - 'multi_model_tester/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Python 3
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9.10
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r perf_test/requirements.txt
+      - name: Run k6 unit tests
+        run: python3 -m unittest unit_test/k6/test_renderer.py
