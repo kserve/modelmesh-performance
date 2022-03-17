@@ -1,0 +1,158 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: Predictor
+metadata:
+  name: example-mnist-predictor
+spec:
+  modelType:
+    name: sklearn
+  path: sklearn/mnist-svm.joblib
+  storage:
+    s3:
+      secretKey: localMinIO
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: perf-test-job
+spec:
+  ttlSecondsAfterFinished: 36000
+  activeDeadlineSeconds: 3600
+  template:
+    spec:
+      containers:
+      - name: driver
+        image: tedhtchang/k6_test:dev
+        imagePullPolicy: Always
+        env:
+        - name: TEMPLATE_DIR
+          value: "/perf/configs"
+        - name: CONFIG_FILE
+          value: "/perf/configs/inference-test-thresholds.json"
+        - name: EXIT_ON_FAILURE
+          value: "true"
+        # uncomment to enable writing k6 metrics to a Prometheus server
+        # - name: K6_PROMETHEUS_REMOTE_URL
+        #   value: "http://prometheus-service:9090/api/v1/write"
+        volumeMounts:
+          - name: config-volume
+            mountPath: /perf/configs
+          - name: payload-config-volume
+            mountPath: /k6_test/payloads
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "1024Mi"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: howitzer-conf
+            items:
+              - key: inference-test-thresholds.json
+                path: inference-test-thresholds.json
+              - key: script_grpc_skmnist.js
+                path: script_grpc_skmnist.js
+        - name: payload-config-volume
+          configMap:
+            name: payload-conf
+            items:
+              - key: 1by16payloadbert.json
+                path: 1by16payloadbert.json
+              - key: 1by64payloadSklearn.json
+                path: 1by64payloadSklearn.json
+      restartPolicy: Never
+  backoffLimit: 0
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: howitzer-conf
+data:
+  inference-test-thresholds.json: |
+    {
+      "rendering_configs": {
+        "title":"K6 Model Mesh Inference Tests",
+        "description": "Example to launch groups of perf tests."
+      },
+      "test_configs": [
+          {
+          "name": "0-warmup",
+          "description": "Warm up sklearn model for 30s with 2vus",
+          "template": "script_grpc_skmnist.js",
+          "payload": "1by64payloadSklearn.json",
+          "base_url": "modelmesh-serving:8033",
+          "model_name": "example-mnist-predictor",
+          "k6_opts": {
+            "vus":[2],
+            "duration":"10s"
+          }
+        },
+        {
+          "name": "small_vus_sklearn_test",
+          "description": "Sample sklearn inference tests, small vus.",
+          "template": "script_grpc_skmnist.js",
+          "payload": "1by64payloadSklearn.json",
+          "base_url": "modelmesh-serving:8033",
+          "model_name": "example-mnist-predictor",
+          "k6_opts": {
+            "vus":[2, 10],
+            "duration":["5s", "10s"],
+            "thresholds": {
+              "grpc_req_duration": ["avg<1000"],
+              "check": ["value>0.5"]
+            }
+          }
+        }
+      ]
+    }
+  script_grpc_skmnist.js: |
+    import grpc from 'k6/net/grpc';
+    import { check } from 'k6';
+    import execution from 'k6/execution';
+
+    {{k6_opts}}
+
+    const client = new grpc.Client();
+    client.load([], '../k6_test/kfs_inference_v2.proto');
+    const inputsData = JSON.parse(open(`../k6_test/payloads/{{payload}}`));
+    let params = {
+      tags: { model_name: `{{model_name}}` },
+    }
+
+    export function setup(){
+    // Abort on connection errors
+      try {
+        client.connect('{{base_url}}', { plaintext: true});
+      } catch (error) {
+        check(error, {"Setup error": (error) => error === null})
+        execution.test.abort(error);
+      }
+    }
+
+    export default () => {
+      client.connect('{{base_url}}', { plaintext: true });
+      const data = {
+        "model_name": "{{model_name}}",
+        "inputs": inputsData["inputs"]
+      };
+      const response = client.invoke('inference.GRPCInferenceService/ModelInfer', data, params);
+
+      check(response, {
+        'status is OK': (response) => response && response.status === grpc.StatusOK,
+      });
+
+      client.close();
+    };
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payload-conf
+data:
+  1by16payloadbert.json: |
+    {
+    "inputs":[{"name":"input_word_ids", "shape": [1, 16], "datatype":"INT32","contents":{"int_contents":[101,1045,2293,13137,20968,102,1045,2293,13137,20968,102,0,0,0,0,0]}}, {"name":"input_mask", "shape":[1,16], "datatype":"INT32","contents":{"int_contents":[1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0]}} ,{"name": "input_type_ids","shape":[1,16], "datatype":"INT32", "contents":{"int_contents":[0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0]}}]
+    }
+  "1by64payloadSklearn.json": |
+    {
+    "inputs": [{ "name": "predict", "shape": [1, 64], "datatype": "FP32", "contents": { "fp32_contents": [0.0, 0.0, 1.0, 11.0, 14.0, 15.0, 3.0, 0.0, 0.0, 1.0, 13.0, 16.0, 12.0, 16.0, 8.0, 0.0, 0.0, 8.0, 16.0, 4.0, 6.0, 16.0, 5.0, 0.0, 0.0, 5.0, 15.0, 11.0, 13.0, 14.0, 0.0, 0.0, 0.0, 0.0, 2.0, 12.0, 16.0, 13.0, 0.0, 0.0, 0.0, 0.0, 0.0, 13.0, 16.0, 16.0, 6.0, 0.0, 0.0, 0.0, 0.0, 16.0, 16.0, 16.0, 7.0, 0.0, 0.0, 0.0, 0.0, 11.0, 13.0, 12.0, 1.0, 0.0] }}]
+    }
