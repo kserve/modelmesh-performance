@@ -11,6 +11,17 @@ function emphasize {
   printf "\e[38;5;81m--- $1 ---\e[0m\n"
 }
 
+function exit_on_failure {
+  # Catch k6 non-zero exit status and quit the rest of tests. For example, connection refused and threashold not met and, etc
+  if [ ! -z $EXIT_ON_FAILURE ] && [ $1 != 0 ]
+  then
+    emphasize "Test failed"
+    tail $ERROR_FILE
+    cat $SUMMARY_FILE_JSON
+    exit $1
+  fi
+}
+
 emphasize "Creating Summary Directory"
 if [[ -d summary ]]
 then
@@ -32,6 +43,7 @@ emphasize "Starting K6 Tests"
 for TEST in render/*.js; do
   emphasize "Beginning K6 test: ${TEST}"
   RESULT_FILE=results/`basename "${TEST%.*}".txt`
+  ERROR_FILE=results/`basename "${TEST%.*}".stderr`
   SUMMARY_FILE_JSON=summary/`basename "${TEST%.*}".json`
   K6_PROMETHEUS_REMOTE_URL=${K6_PROMETHEUS_REMOTE_URL}
 
@@ -41,12 +53,13 @@ for TEST in render/*.js; do
 
   if [[ -z $K6_PROMETHEUS_REMOTE_URL ]]; then
     echo "No K6_PROMETHEUS_REMOTE_URL was set, running default k6"
-    k6 run $TEST --summary-export=$SUMMARY_FILE_JSON >> $RESULT_FILE
+    k6 run $TEST --summary-export=$SUMMARY_FILE_JSON >> $RESULT_FILE 2>> $ERROR_FILE
   else
     echo "Sending K6 metrics to K6_PROMETHEUS_REMOTE_URL at ${K6_PROMETHEUS_REMOTE_URL}"
-    ./k6_test/k6 run $TEST --summary-export=$SUMMARY_FILE_JSON >> $RESULT_FILE -o output-prometheus-remote
+    ./k6_test/k6 run $TEST --summary-export=$SUMMARY_FILE_JSON -o output-prometheus-remote >> $RESULT_FILE 2>> $ERROR_FILE
   fi
-  
+  k6_status=$?
+
   # Write EndTime to File
   date >> $RESULT_FILE;
 
@@ -62,6 +75,7 @@ for TEST in render/*.js; do
   fi
 
   TEST_NO=$((TEST_NO+1))
+  exit_on_failure $k6_status
   emphasize "Waiting 5s before next test"
   sleep 5
 done

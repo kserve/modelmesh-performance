@@ -1,0 +1,24 @@
+{
+  "rendering_configs": {
+    "title":"K6 Model Mesh Inference Tests",
+    "description": "Example to launch groups of perf tests."
+  },
+  "test_configs": [
+    {
+      "name": "small_vus_sklearn_test",
+      "description": "2 sample sklearn inference tests, small vus.",
+      "template": "grpc/script_grpc_skmnist.js",
+      "payload": "1by64payloadSklearn.json",
+      "base_url": "localhost:8033",
+      "model_name": "example-mnist-predictor",
+      "k6_opts": {
+        "vus":[2, 10],
+        "duration":["5s", "10s"],
+        "thresholds": {
+          "grpc_req_duration": ["avg<2000"],
+          "check": ["value>0.5"]
+        }
+      }
+    }
+  ]
+}

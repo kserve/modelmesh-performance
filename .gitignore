@@ -129,3 +129,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Howitzer generated
+results/
+summary/
+render/
