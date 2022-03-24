@@ -1,0 +1,11 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: Predictor
+metadata:
+  name: example-mnist-predictor
+spec:
+  modelType:
+    name: sklearn
+  path: sklearn/mnist-svm.joblib
+  storage:
+    s3:
+      secretKey: localMinIO
