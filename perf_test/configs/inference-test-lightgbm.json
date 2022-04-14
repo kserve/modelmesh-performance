@@ -1,0 +1,20 @@
+{
+    "rendering_configs": {
+      "title":"K6 Model Mesh Inference Tests",
+      "description": "Example to launch groups of perf tests."
+    },
+    "test_configs": [
+      {
+        "name": "small_vus_lightgbm_test",
+        "description": "2 sample lightgbm inference tests, small vus.",
+        "template": "grpc/script_grpc_skmnist.js",
+        "payload": "1by126payloadLightgbm.json",
+        "base_url": "localhost:8033",
+        "model_name": "lightgbm-predictor",
+        "k6_opts": {
+          "vus":[10, 20],
+          "duration":["2s","10s"]
+        }
+      }
+    ]
+  }

@@ -1,0 +1,38 @@
+{
+    "inputs": [
+      { 
+        "name": "state", 
+        "shape": [2], 
+        "datatype": "STRING", 
+        "contents": {
+           "bytes_contents": ["Tlk=", "Tlk="] 
+           }
+      },
+      {
+        "name": "FeatureCols2", 
+        "shape": [2, 8], 
+        "datatype": "FP64", 
+        "parameters": {
+          "features": {
+            "stringParam" : "bathrooms,square_feet,bedrooms,security_deposit,cleaning_fee,extra_people,number_of_reviews,review_scores_rating"
+          }
+        },
+        "contents": {
+           "fp64_contents": [2, 1250, 3, 50, 30, 2, 56, 90, 3, 1500, 4, 70, 50, 3, 44, 75] 
+           }
+      },
+      {
+        "name": "FeatureCols3", 
+        "shape": [2, 4], 
+        "datatype": "STRING", 
+        "parameters": {
+          "features": {
+            "stringParam": "room_type,host_is_superhost,cancellation_policy,instant_bookable"
+          }
+        },
+        "contents": {
+           "bytes_contents": [ "RW50aXJlIGhvbWUvYXB0", "MS4w", "c3RyaWN0", "MS4w", "RW50aXJlIGhvbWUvYXB0", "MS4w", "c3RyaWN0", "MS4w"]
+        }
+      }
+    ]
+  }

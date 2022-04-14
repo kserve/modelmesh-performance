@@ -1,0 +1,39 @@
+{
+    "inputs": [
+      { 
+        "name": "AGE", 
+        "shape": [2], 
+        "datatype": "FP64", 
+        "contents": {
+           "fp64_contents": [47, 27]
+           }
+      },
+      {
+        "name": "FeatureCols2", 
+        "shape": [2, 3], 
+        "datatype": "STRING", 
+        "parameters":{
+          "features":{
+            "stringParam": "SEX,BP,CHOLESTEROL"
+          }
+        },
+        "contents": {
+           "bytes_contents": [ "TQ==", "TE9X", "SE1HSA==", "Rg==", "TE9X", "SE1HSA==" ] 
+           }
+      },
+      {
+        "name": "FeatureCols3", 
+        "shape": [2, 2], 
+        "datatype": "FP64", 
+        "parameters":{
+          "features":{
+            "stringParam": "NA,K"
+          }
+        },
+        "contents": {
+           "fp64_contents": [0.739, 0.056, 0.939, 0.156]
+           }
+      }
+    ]
+  }
+  

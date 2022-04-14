@@ -1,0 +1,16 @@
+######################################################### {COPYRIGHT-TOP} ###
+# IBM Confidential
+# IBM Watson Machine Learning Core
+# Copyright IBM Corp. 2021
+######################################################### {COPYRIGHT-END} ###
+apiVersion: wmlserving.ai.ibm.com/v1
+kind: Predictor
+metadata:
+  name: lightgbm-predictor
+spec:
+  modelType:
+    name: lightgbm
+  path: fvt/lightgbm/mushroom
+  storage:
+    s3:
+      secretKey: wml-serving-models

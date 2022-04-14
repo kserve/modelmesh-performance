@@ -1,0 +1,21 @@
+{
+    "inputs": [
+      { 
+        "name": "id", 
+        "shape": [2, 1], 
+        "datatype": "INT64", 
+        "contents": {
+           "int64_contents": [5, 6]
+          }
+      },
+      {
+        "name": "text", 
+        "shape": [2], 
+        "datatype": "STRING", 
+        "contents":{
+          "bytes_contents": ["bCBtIG4=", "c3BhcmsgaGFkb29wIHNwYXJr"]
+        }
+      }
+    ]
+  }
+  

@@ -1,0 +1,16 @@
+######################################################### {COPYRIGHT-TOP} ###
+# IBM Confidential
+# IBM Watson Machine Learning Core
+# Copyright IBM Corp. 2021
+######################################################### {COPYRIGHT-END} ###
+apiVersion: wmlserving.ai.ibm.com/v1
+kind: Predictor
+metadata:
+  name: snapml-mnist-svm
+spec:
+  modelType:
+    name: sklearn
+  path: fvt/sklearn/snapml-mnist-svm.joblib
+  storage:
+    s3:
+      secretKey: wml-serving-models

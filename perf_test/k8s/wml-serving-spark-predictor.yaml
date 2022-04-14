@@ -1,0 +1,16 @@
+######################################################### {COPYRIGHT-TOP} ###
+# IBM Confidential
+# IBM Watson Machine Learning Core
+# Copyright IBM Corp. 2021
+######################################################### {COPYRIGHT-END} ###
+apiVersion: wmlserving.ai.ibm.com/v1
+kind: Predictor
+metadata:
+  name: spark-test-predictor
+spec:
+  modelType:
+    name: spark
+  path: fvt/spark/simple-text-classification/classification-model.tar.gz
+  storage:
+    s3:
+      secretKey: wml-serving-models
