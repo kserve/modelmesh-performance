@@ -1,9 +1,4 @@
-######################################################### {COPYRIGHT-TOP} ###
-# IBM Confidential
-# IBM Watson Machine Learning Core
-# Copyright IBM Corp. 2021
-######################################################### {COPYRIGHT-END} ###
-apiVersion: wmlserving.ai.ibm.com/v1
+apiVersion: serving.kserve.io/v1alpha1
 kind: Predictor
 metadata:
   name: xgboost-mushroom
