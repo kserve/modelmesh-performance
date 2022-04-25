@@ -53,7 +53,7 @@ for TEST in render/*.js; do
 
   if [[ -z $K6_PROMETHEUS_REMOTE_URL ]]; then
     echo "No K6_PROMETHEUS_REMOTE_URL was set, running default k6"
-    k6 run $TEST --summary-export=$SUMMARY_FILE_JSON >> $RESULT_FILE 2>> $ERROR_FILE
+    ./k6_test/k6 run $TEST --summary-export=$SUMMARY_FILE_JSON >> $RESULT_FILE 2>> $ERROR_FILE
   else
     echo "Sending K6 metrics to K6_PROMETHEUS_REMOTE_URL at ${K6_PROMETHEUS_REMOTE_URL}"
     ./k6_test/k6 run $TEST --summary-export=$SUMMARY_FILE_JSON -o output-prometheus-remote >> $RESULT_FILE 2>> $ERROR_FILE
