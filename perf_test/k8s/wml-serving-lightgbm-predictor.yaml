@@ -1,11 +1,11 @@
 apiVersion: serving.kserve.io/v1alpha1
 kind: Predictor
 metadata:
-  name: lightgbm-predictor
+  name: example-lightgbm-mushroom
 spec:
   modelType:
     name: lightgbm
-  path: fvt/lightgbm/mushroom
+  path: lightgbm/mushroom.bst
   storage:
     s3:
-      secretKey: wml-serving-models
+      secretKey: localMinIO

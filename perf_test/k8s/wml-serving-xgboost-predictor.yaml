@@ -1,11 +1,11 @@
 apiVersion: serving.kserve.io/v1alpha1
 kind: Predictor
 metadata:
-  name: xgboost-mushroom
+  name: example-xgboost-mushroom
 spec:
   modelType:
     name: xgboost
-  path: fvt/xgboost/mushroom
+  path: xgboost/mushroom.json
   storage:
     s3:
-      secretKey: wml-serving-models
+      secretKey: localMinIO

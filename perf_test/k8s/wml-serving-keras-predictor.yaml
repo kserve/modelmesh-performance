@@ -1,11 +1,11 @@
 apiVersion: serving.kserve.io/v1alpha1
 kind: Predictor
 metadata:
-  name: keras-predictor
+  name: example-keras-mnist
 spec:
   modelType:
     name: keras
-  path: fvt/tensorflow/keras-mnist/mnist.h5
+  path: keras/mnist.h5
   storage:
     s3:
-      secretKey: wml-serving-models
+      secretKey: localMinIO

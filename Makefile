@@ -25,31 +25,31 @@ deploy.predictor:
 #	kubectl apply -f ./perf_test/k8s/example-mnist-predictor.yaml
 #	oc apply -f ./perf_test/k8s/wml-serving-example-mnist-predictor.yaml
 
-#	oc apply -f ./perf_test/k8s/wml-serving-snapmlmnist-predictor.yaml
-#	oc apply -f ./perf_test/k8s/wml-serving-keras-predictor.yaml
-#	oc apply -f ./perf_test/k8s/wml-serving-pytorch-predictor.yaml
-#	oc apply -f ./perf_test/k8s/wml-serving-lightgbm-predictor.yaml
-#	oc apply -f ./perf_test/k8s/wml-serving-onnx-predictor.yaml
-#	oc apply -f ./perf_test/k8s/wml-serving-tensorflow-predictor.yaml
-#	oc apply -f ./perf_test/k8s/wml-serving-mleap-predictor.yaml
-#	oc apply -f ./perf_test/k8s/wml-serving-pmml-predictor.yaml
-#	oc apply -f ./perf_test/k8s/wml-serving-spark-predictor.yaml
-#	oc apply -f ./perf_test/k8s/wml-serving-xgboost-predictor.yaml
+	oc apply -f ./perf_test/k8s/wml-serving-snapmlmnist-predictor.yaml
+	oc apply -f ./perf_test/k8s/wml-serving-keras-predictor.yaml
+	oc apply -f ./perf_test/k8s/wml-serving-pytorch-predictor.yaml
+	oc apply -f ./perf_test/k8s/wml-serving-lightgbm-predictor.yaml
+	oc apply -f ./perf_test/k8s/wml-serving-onnx-predictor.yaml
+	oc apply -f ./perf_test/k8s/wml-serving-tensorflow-predictor.yaml
+	oc apply -f ./perf_test/k8s/wml-serving-mleap-predictor.yaml
+	oc apply -f ./perf_test/k8s/wml-serving-pmml-predictor.yaml
+	oc apply -f ./perf_test/k8s/wml-serving-spark-predictor.yaml
+	oc apply -f ./perf_test/k8s/wml-serving-xgboost-predictor.yaml
 	oc apply -f ./perf_test/k8s/wml-serving-sklearnMLserver-predictor.yaml
 
 # Run perf-test from the local machine
 run.howitzer-local:
-#	CONFIG_FILE=./perf_test/configs/inference-test-lightgbm.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
-#	CONFIG_FILE=./perf_test/configs/inference-test-onnx.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
-#	CONFIG_FILE=./perf_test/configs/inference-test-tensorflow.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
-#	CONFIG_FILE=./perf_test/configs/inference-test-pytorch.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
-#	CONFIG_FILE=./perf_test/configs/inference-test_skmnist.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
+	CONFIG_FILE=./perf_test/configs/inference-test-lightgbm.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
+	CONFIG_FILE=./perf_test/configs/inference-test-onnx.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
+	CONFIG_FILE=./perf_test/configs/inference-test-tensorflow.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
+	CONFIG_FILE=./perf_test/configs/inference-test-pytorch.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
+	CONFIG_FILE=./perf_test/configs/inference-test_skmnist.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
 #	CONFIG_FILE=./perf_test/configs/inference-test-xgboost.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
 #	CONFIG_FILE=./perf_test/configs/inference-test-mleap.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
 #	CONFIG_FILE=./perf_test/configs/inference-test-spark.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
 #	CONFIG_FILE=./perf_test/configs/inference-test-pmml.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
 #	CONFIG_FILE=./perf_test/configs/inference-test-keras.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
-	CONFIG_FILE=./perf_test/configs/inference-test-sklearn.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
+#	CONFIG_FILE=./perf_test/configs/inference-test-sklearn.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
 #	CONFIG_FILE=./perf_test/configs/inference-test-snapml.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
 
 # snapml exists? sklearn == snapml? how to do mleap and pmml

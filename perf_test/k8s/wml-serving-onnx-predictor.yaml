@@ -1,11 +1,11 @@
 apiVersion: serving.kserve.io/v1alpha1
 kind: Predictor
 metadata:
-  name: onnx-test-predictor
+  name: example-onnx-mnist
 spec:
   modelType:
     name: onnx
-  path: fvt/onnx/onnx-mnist
+  path: onnx/mnist.onnx
   storage:
     s3:
-      secretKey: wml-serving-models
+      secretKey: localMinIO
