@@ -25,17 +25,17 @@ deploy.predictor:
 #	kubectl apply -f ./perf_test/k8s/example-mnist-predictor.yaml
 #	oc apply -f ./perf_test/k8s/wml-serving-example-mnist-predictor.yaml
 
-	oc apply -f ./perf_test/k8s/wml-serving-snapmlmnist-predictor.yaml
-	oc apply -f ./perf_test/k8s/wml-serving-keras-predictor.yaml
-	oc apply -f ./perf_test/k8s/wml-serving-pytorch-predictor.yaml
-	oc apply -f ./perf_test/k8s/wml-serving-lightgbm-predictor.yaml
-	oc apply -f ./perf_test/k8s/wml-serving-onnx-predictor.yaml
-	oc apply -f ./perf_test/k8s/wml-serving-tensorflow-predictor.yaml
-	oc apply -f ./perf_test/k8s/wml-serving-mleap-predictor.yaml
-	oc apply -f ./perf_test/k8s/wml-serving-pmml-predictor.yaml
-	oc apply -f ./perf_test/k8s/wml-serving-spark-predictor.yaml
-	oc apply -f ./perf_test/k8s/wml-serving-xgboost-predictor.yaml
-	oc apply -f ./perf_test/k8s/wml-serving-sklearnMLserver-predictor.yaml
+	oc apply -f ./perf_test/k8s/snapmlmnist-predictor.yaml
+	oc apply -f ./perf_test/k8s/keras-predictor.yaml
+	oc apply -f ./perf_test/k8s/pytorch-predictor.yaml
+	oc apply -f ./perf_test/k8s/lightgbm-predictor.yaml
+	oc apply -f ./perf_test/k8s/onnx-predictor.yaml
+	oc apply -f ./perf_test/k8s/tensorflow-predictor.yaml
+	oc apply -f ./perf_test/k8s/mleap-predictor.yaml
+	oc apply -f ./perf_test/k8s/pmml-predictor.yaml
+	oc apply -f ./perf_test/k8s/spark-predictor.yaml
+	oc apply -f ./perf_test/k8s/xgboost-predictor.yaml
+	oc apply -f ./perf_test/k8s/sklearnMLserver-predictor.yaml
 
 # Run perf-test from the local machine
 run.howitzer-local:
