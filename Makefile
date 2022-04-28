@@ -35,7 +35,7 @@ deploy.predictor:
 	oc apply -f ./perf_test/k8s/pmml-predictor.yaml
 	oc apply -f ./perf_test/k8s/spark-predictor.yaml
 	oc apply -f ./perf_test/k8s/xgboost-predictor.yaml
-	oc apply -f ./perf_test/k8s/sklearnMLserver-predictor.yaml
+	oc apply -f ./perf_test/k8s/mlserver-sklearn-predictor.yaml
 
 # Run perf-test from the local machine
 run.howitzer-local:
@@ -51,9 +51,6 @@ run.howitzer-local:
 #	CONFIG_FILE=./perf_test/configs/inference-test-keras.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
 #	CONFIG_FILE=./perf_test/configs/inference-test-sklearn.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
 #	CONFIG_FILE=./perf_test/configs/inference-test-snapml.json TEMPLATE_DIR=./k6_test/ EXIT_ON_FAILURE=true ./perf_test/runHowitzer.sh
-
-# snapml exists? sklearn == snapml? how to do mleap and pmml
-
 
 # Run perf-test inside a k8s cluster using pre-built image
 run.perf-test: run.delete-perf-test-job deploy.predictor
