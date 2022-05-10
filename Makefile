@@ -25,13 +25,13 @@ deploy.predictor:
 #	kubectl apply -f ./perf_test/k8s/example-mnist-predictor.yaml
 #	oc apply -f ./perf_test/k8s/wml-serving-example-mnist-predictor.yaml
 
-	oc apply -f ./perf_test/k8s/keras-predictor.yaml
-	oc apply -f ./perf_test/k8s/pytorch-predictor.yaml
-	oc apply -f ./perf_test/k8s/lightgbm-predictor.yaml
-	oc apply -f ./perf_test/k8s/onnx-predictor.yaml
-	oc apply -f ./perf_test/k8s/tensorflow-predictor.yaml
-	oc apply -f ./perf_test/k8s/xgboost-predictor.yaml
-	oc apply -f ./perf_test/k8s/mlserver-sklearn-predictor.yaml
+	kubectl apply -f ./perf_test/k8s/keras-predictor.yaml
+	kubectl apply -f ./perf_test/k8s/lightgbm-predictor.yaml
+	kubectl apply -f ./perf_test/k8s/mlserver-sklearn-predictor.yaml
+]	kubectl apply -f ./perf_test/k8s/onnx-predictor.yaml
+	kubectl apply -f ./perf_test/k8s/pytorch-predictor.yaml
+	kubectl apply -f ./perf_test/k8s/tensorflow-predictor.yaml
+	kubectl apply -f ./perf_test/k8s/xgboost-predictor.yaml
 
 # Run perf-test from the local machine
 run.howitzer-local:
@@ -47,7 +47,7 @@ run.howitzer-local:
 # Run perf-test inside a k8s cluster using pre-built image
 run.perf-test: run.delete-perf-test-job deploy.predictor
 	kubectl apply -f ./perf_test/k8s/howitzer_k6_test-k8s.yaml
-	# kubectl wait po -l='job-name=perf-test-job' --for=condition=READY=true --timeout=300s
-	# kubectl logs -f `kubectl get po -l='job-name=perf-test-job' -o jsonpath='{.items[*].metadata.name}'`
+# kubectl wait po -l='job-name=perf-test-job' --for=condition=READY=true --timeout=300s
+# kubectl logs -f `kubectl get po -l='job-name=perf-test-job' -o jsonpath='{.items[*].metadata.name}'`
 run.delete-perf-test-job:
 	kubectl delete -f ./perf_test/k8s/howitzer_k6_test-k8s.yaml
