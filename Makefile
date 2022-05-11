@@ -28,7 +28,7 @@ deploy.predictor:
 	kubectl apply -f ./perf_test/k8s/keras-predictor.yaml
 	kubectl apply -f ./perf_test/k8s/lightgbm-predictor.yaml
 	kubectl apply -f ./perf_test/k8s/mlserver-sklearn-predictor.yaml
-]	kubectl apply -f ./perf_test/k8s/onnx-predictor.yaml
+	kubectl apply -f ./perf_test/k8s/onnx-predictor.yaml
 	kubectl apply -f ./perf_test/k8s/pytorch-predictor.yaml
 	kubectl apply -f ./perf_test/k8s/tensorflow-predictor.yaml
 	kubectl apply -f ./perf_test/k8s/xgboost-predictor.yaml
