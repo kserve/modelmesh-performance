@@ -189,8 +189,17 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--config-file', metavar='CONFIG_FILE',
                         help='The absolute path to the one true test config file to be exploded',
                         required=True)
+    parser.add_argument('-p', '--persistent-results-dir', metavar='PERSISTENT_RESULTS_DIR',
+                        help='The absolute path to where we want to copy the summary.json pvc for later consumption',
+                        required=False)
 
     args = parser.parse_args()
 
     generate_md_output(args.config_file, args.results_dir)
     generate_summary_output(args.summaries_dir, args.config_file, args.results_dir)
+    
+    if args.persistent_results_dir is not None:
+        persistent_dir = args.persistent_results_dir
+
+        if os.path.exists(persistent_dir):
+            shutil.copyfile(SUMMARY_FILENAME, os.path.join(persistent_dir, SUMMARY_FILENAME))
