@@ -67,7 +67,7 @@ for TEST in render/*.js; do
   cat $RESULT_FILE
 
   emphasize "Generating intermediate Markdown for K6 tests..."
-  python3 -m perf_test.scripts.scraper -r results -s summary -c $CONFIG_FILE 
+  python3 -m perf_test.scripts.scraper -r results -s summary -c $CONFIG_FILE -p /app/persistent-results
   # -k configs/kingdom.dict -p persistent-results 
 
   if [ $? -eq 137 ]; then
@@ -82,7 +82,7 @@ for TEST in render/*.js; do
 done
 
 emphasize "Generating final Markdown for K6 tests..."
-python3 -m perf_test.scripts.scraper -r results -s summary -c $CONFIG_FILE 
+python3 -m perf_test.scripts.scraper -r results -s summary -c $CONFIG_FILE -p /app/persistent-results
 # -k configs/kingdom.dict -p persistent-results 
 # emphasize "K6 TESTS ARE COMPLETE. Use the following command to copy to your CWD."
 # echo "kubectl cp ${POD_NAME}:output.md ./output.md && kubectl cp ${POD_NAME}:summary.json ./summary.json"

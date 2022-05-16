@@ -190,7 +190,7 @@ if __name__ == '__main__':
                         help='The absolute path to the one true test config file to be exploded',
                         required=True)
     parser.add_argument('-p', '--persistent-results-dir', metavar='PERSISTENT_RESULTS_DIR',
-                        help='The absolute path to where we want to copy the summary.json pvc for later consumption',
+                        help='Absolute path to the persistant storage location where to store the summary.json for later consumption',
                         required=False)
 
     args = parser.parse_args()
@@ -200,6 +200,9 @@ if __name__ == '__main__':
     
     if args.persistent_results_dir is not None:
         persistent_dir = args.persistent_results_dir
+        print(f"Persistent dir path set to: {persistent_dir}")
 
         if os.path.exists(persistent_dir):
             shutil.copyfile(SUMMARY_FILENAME, os.path.join(persistent_dir, SUMMARY_FILENAME))
+        else:
+            print(f"Supplied path {persistent_dir} does not exist.")
