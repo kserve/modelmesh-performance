@@ -32,6 +32,11 @@ deploy.predictor:
 	kubectl apply -f ./perf_test/k8s/pytorch-predictor.yaml
 	kubectl apply -f ./perf_test/k8s/tensorflow-predictor.yaml
 	kubectl apply -f ./perf_test/k8s/xgboost-predictor.yaml
+	kubectl apply -f ./perf_test/k8s/example-mnist-predictor.yaml
+
+# Delete the resources used with the performance tests
+delete.predictor:
+	kubectl delete -f ./perf_test/k8s/example-mnist-predictor.yaml --ignore-not-found=true
 
 # Run perf-test from the local machine
 run.howitzer-local:
@@ -49,5 +54,5 @@ run.perf-test: run.delete-perf-test-job deploy.predictor
 	kubectl apply -f ./perf_test/k8s/howitzer_k6_test-k8s.yaml
 # kubectl wait po -l='job-name=perf-test-job' --for=condition=READY=true --timeout=300s
 # kubectl logs -f `kubectl get po -l='job-name=perf-test-job' -o jsonpath='{.items[*].metadata.name}'`
-run.delete-perf-test-job:
-	kubectl delete -f ./perf_test/k8s/howitzer_k6_test-k8s.yaml
+run.delete-perf-test-job: delete.predictor
+	kubectl delete -f ./perf_test/k8s/howitzer_k6_test-k8s.yaml --ignore-not-found=true
