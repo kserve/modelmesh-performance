@@ -1,1 +1,2 @@
 jinja2
+prometheus_api_client
