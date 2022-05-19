@@ -1,2 +1,3 @@
 jinja2
+mlflow
 prometheus_api_client
