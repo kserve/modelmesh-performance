@@ -1,0 +1,11 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: Predictor
+metadata:
+  name: example-pytorch-cifar
+spec:
+  modelType:
+    name: pytorch
+  path: pytorch/cifar
+  storage:
+    s3:
+      secretKey: localMinIO

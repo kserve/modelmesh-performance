@@ -1,0 +1,12 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: Predictor
+metadata:
+  name: example-tensorflow-mnist
+spec:
+  modelType:
+    name: tensorflow
+  path: tensorflow/mnist.savedmodel
+  schemaPath: fvt/tensorflow/schema/tf-schema.json
+  storage:
+    s3:
+      secretKey: localMinIO
