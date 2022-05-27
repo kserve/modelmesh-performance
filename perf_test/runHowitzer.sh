@@ -66,10 +66,6 @@ for TEST in render/*.js; do
   emphasize "Intermediate test results for: ${TEST}"
   cat $RESULT_FILE
 
-  emphasize "Generating intermediate Markdown for K6 tests..."
-  python3 -m perf_test.scripts.scraper -r results -s summary -c $CONFIG_FILE -p /app/persistent-results
-  # -k configs/kingdom.dict -p persistent-results 
-
   if [ $? -eq 137 ]; then
     emphasize "ERROR: TEST $TEST WAS OOMKILLED; IT WILL NOT PRODUCE ANY RESULTS."
     rm $RESULT_FILE
