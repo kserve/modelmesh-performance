@@ -80,8 +80,9 @@ done
 emphasize "Generating final Markdown for K6 tests..."
 python3 -m perf_test.scripts.scraper -r results -s summary -c $CONFIG_FILE -p /app/persistent-results
 # -k configs/kingdom.dict -p persistent-results 
+
 # emphasize "K6 TESTS ARE COMPLETE. Use the following command to copy to your CWD."
 # echo "kubectl cp ${POD_NAME}:output.md ./output.md && kubectl cp ${POD_NAME}:summary.json ./summary.json"
 
-# Add a sleep at the end of the job to give time to exec into pods if need be
-sleep 120
+# For debugging Add a sleep at the end of the job to give time to exec into pods if need be
+# sleep 120
