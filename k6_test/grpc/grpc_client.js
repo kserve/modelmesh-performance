@@ -20,9 +20,9 @@ function checkResponse(res) {
 
 export class GrpcClient {
   constructor(options) {
-    this.grpcHost = options.grpcHost;
-    this.client = getClient(options.protoFilePath);
-    this.inferRPCName = options.inferRPCName;
+    this.grpcHost = options.grpcHost || 'modelmesh-serving:8033';
+    this.client = getClient(options.protoFilePath || '../k6_test/kfs_inference_v2.proto');
+    this.inferRPCName = options.inferRPCName || 'inference.GRPCInferenceService/ModelInfer';
 
     // Client can't connect on the init context
     this.connected = false;
