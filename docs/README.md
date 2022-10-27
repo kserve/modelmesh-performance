@@ -1,10 +1,12 @@
-## Using deployment scripts
-The scripts requires [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and login your namespace where the ModelMesh Serving is installed, usually `modelmesh-serving` namespace. Below are examples of creating/removing models from the ModelMesh Serving instance using the included shell scripts:
+## Using Deployment Scripts
+The scripts require [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and setting the context to use the namespace where ModelMesh Serving is installed, usually `modelmesh-serving`. Below are examples of creating/removing models from the ModelMesh Serving instance using the included shell scripts.
 
 
 ```bash
 cd multi_model_tester
 ```
+
+### Deploying Models
 ```bash
 # Deploy 5000 Mnist Onnx models named mnist-onnx-1 to mnist-onnx-5000 at concurrency of 10
 ./deployNpredictors.sh 10 mnist-onnx 1 5000 deploy_1mnist_onnx_predictor.sh
@@ -13,7 +15,7 @@ cd multi_model_tester
 # Deploy 1000 simple string models named simple-string-tf-1000 to simple-string-2000 at concurrency of 30
 ./deployNpredictors.sh 30 simple-string-tf 1000 2000 deploy_1simple_string_tf_predictor.sh
 ```
-To clean up the models:
+### Deleting Models
 ```bash
 # Remove Mnist Onnx models named mnist-onnx-1 to mnist-onnx-5000 at concurrency of 10
 ./rmNpredictors.sh 10 mnist-onnx 1 5000 rm_1mnist_onnx_predictor.sh
@@ -22,21 +24,21 @@ To clean up the models:
 # Remove 1000 simple string models named simple-string-tf-1000 to simple-string-2000 at concurrency of 30
 ./rmNpredictors.sh 30 simple-string-tf 1000 2000 rm_1simple_string_tf_predictor.sh
 ```
-## Using the multi_model_tester
+## Using the `multi_model_tester`
 The `multi_model_tester` is written in Go and utilizes a modified [Trunks](https://github.com/straightdave/trunks.git) library that uses round_robbin loadbalancer policy and targets `dns:///modelmesh-serving:8033`.
 
-The tester generates a mix of up to six heterogeneous model inference requests to stress the [inference request gRPC api](https://github.com/kserve/kserve/blob/master/docs/predict-api/v2/required_api.md#grpc) of ModelMesh Serving instance.
+The tester generates a mix of up to six heterogeneous model inference requests to stress the [Inference Request gRPC API](https://github.com/kserve/kserve/blob/master/docs/predict-api/v2/required_api.md#grpc) of the ModelMesh Serving instance.
 
-### Build the tester binary:
+### Build:
 ```bash
-git clone https://github.com/tedhtchang/kserve-perf.git
-cd kserve-perf/multi_model_tester
+cd multi_model_tester
 go build .
 ```
 
 ### Usage:
 ```bash
 ./multi_model_test -h
+
 Usage of ./multi_model_test:
   -cp uint
     	Number of connections to create. Default: 1 (default 1)
@@ -55,18 +57,18 @@ Usage of ./multi_model_test:
   -wp uint
     	Number of worker pool. Default: 1 (default 1)
 ```
-### Examples
-Using the tester from inside same namespace to target the kube-dns address and port that is corresponding ModelMesh Serving service.
+### Examples:
+The following examples use the tester from inside the same namespace to target the kube-dns address and port corresponding to the ModelMesh Serving service.
 
-Target the Simple-String models named simple-string-tf-1 to simple-string-tf-2000 at 1000 queries for 60 seconds.
+Target the Simple-String models named `simple-string-tf-1` to `simple-string-tf-2000` at 1000 queries for 60 seconds.
 ```bash
 ./multi_model_test -u dns:///modelmesh-serving:8033 -npm 2000 -ma "SimpleStringTF" -qps 1000 -dur 60
 ```
-Target the Simple-String and MnistOnnx models named simple-string-tf-1 to simple-string-tf-2000 and mnist-onnx-1 to mnist-onnx-2000 at 1000 queries for 60 seconds.
+Target the Simple-String and MnistOnnx models named `simple-string-tf-1` to `simple-string-tf-2000` and `mnist-onnx-1` to `mnist-onnx-2000` at 1000 queries for 60 seconds.
 ```bash
 ./multi_model_test -u dns:///modelmesh-serving:8033 -npm 2000 -ma "SimpleStringTF MnistOnnx" -qps 1000 -dur 60
 ```
- Sometimes, it is useful to verify whether all tested the models can respond. In debug mode, the tester sends inference requests to Simple-String and MnistOnnx models named simple-string-tf-1 to simple-string-tf-2000 and mnist-onnx-1 to mnist-onnx-2000 sequentially and print the response.
+ Sometimes, it is useful to verify whether all the models can respond. In debug mode, the tester sends inference requests to Simple-String and MnistOnnx models named `simple-string-tf-1` to `simple-string-tf-2000` and `mnist-onnx-1` to `mnist-onnx-2000` sequentially and print the response.
 
 ```bash
 ./multi_model_test -u dns:///modelmesh-serving:8033 -npm 2000 -ma "SimpleStringTF MnistOnnx" -debug
