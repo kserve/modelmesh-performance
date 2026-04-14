@@ -1,3 +1,6 @@
+> This repo has been archived. Please check out [the main KServe repo](https://github.com/kserve/kserve).
+
+
 # ModelMesh Metrics
 ModelMesh Performance Scripts, Dashboard and Pipelines.
 Follow the instruction to run gRPC inference requests benchmark on a ModelMesh Serving instance on a Kubernetes cluster:
